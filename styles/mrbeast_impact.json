@@ -1,0 +1,8 @@
+{
+  "font_weight": "black",
+  "font_name": "Arial Black",
+  "primary_hex": "#FFFFFF",
+  "highlight_hex": "#00E5FF",
+  "safe_zone_margin_percent": 18,
+  "zoom_intensity": 0.035
+}

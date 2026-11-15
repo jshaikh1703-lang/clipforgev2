@@ -1,0 +1,8 @@
+{
+  "font_weight": "black",
+  "font_name": "Impact",
+  "primary_hex": "#FFFFFF",
+  "highlight_hex": "#FFE600",
+  "safe_zone_margin_percent": 18,
+  "zoom_intensity": 0.025
+}

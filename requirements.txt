@@ -1,0 +1,11 @@
+yt-dlp
+google-genai
+faster-whisper
+psutil
+numpy
+opencv-python-headless==4.12.0.88
+ijson
+fastapi
+uvicorn
+python-multipart
+jinja2

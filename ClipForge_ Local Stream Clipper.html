@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClipForge: Local Stream Clipper</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);background:#09090b}
+body{background:#09090b;color:#e4e4e7;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:env(safe-area-inset-bottom,0px)}
+.mono{font-family:ui-monospace,Consolas,monospace}
+.glow{box-shadow:0 0 22px rgba(16,185,129,.4)}
+.pl{container-type:inline-size}
+@keyframes drift{to{transform:translateX(-50%)}}@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes bnc{0%{transform:translateY(.25em)}60%{transform:translateY(-.1em)}100%{transform:none}}
+@keyframes trk{0%{left:8%}100%{left:54%}}
+.pop{display:inline-block;animation:pop .22s ease-out}.bnc{display:inline-block;animation:bnc .25s ease-out}
+.road{background:repeating-linear-gradient(90deg,#fff3 0 18px,transparent 18px 46px);width:200%;animation:drift 1s linear infinite}
+.paused *{animation-play-state:paused!important}
+details>summary{list-style:none;cursor:pointer}details>summary::-webkit-details-marker{display:none}
+button:focus-visible,input:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head>
+<body class="min-h-screen">
+<header class="border-b border-zinc-800 bg-zinc-950/80 sticky top-0 z-20 backdrop-blur">
+ <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+  <div class="flex items-center gap-2 mr-auto"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-purple-500 grid place-items-center text-zinc-950 font-black">C</div>
+  <div><div class="font-bold leading-none">ClipForge</div><div class="text-xs text-zinc-500">Local engine, $0/month</div></div></div>
+  <div id="status" class="flex flex-wrap gap-2 text-xs"></div>
+ </div>
+</header>
+<main class="max-w-7xl mx-auto px-4 py-6 pb-32">
+<section class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+ <div class="flex flex-wrap items-center gap-3">
+  <h1 class="text-xl font-bold mr-auto">Turn a long stream into ready-to-post clips</h1>
+  <div id="plat" class="flex rounded-xl border border-zinc-700 p-1 text-sm"></div>
+ </div>
+ <div class="mt-4 flex flex-col sm:flex-row gap-2">
+  <input id="url" class="flex-1 mono text-sm rounded-xl bg-zinc-950 border border-zinc-700 px-4 py-3 outline-none focus:border-emerald-400" aria-label="Stream URL">
+  <button id="go" class="rounded-xl px-6 py-3 font-bold text-zinc-950 bg-emerald-400 hover:bg-emerald-300 glow transition active:scale-95 disabled:opacity-40 disabled:shadow-none">Fetch &amp; Analyze</button>
+ </div>
+ <div id="valid" class="text-xs mt-2 mono"></div>
+ <div class="mt-5 grid lg:grid-cols-3 gap-5 text-sm">
+  <div><div class="text-zinc-400 mb-2">Format and framing</div><div id="optFmt" class="grid gap-2"></div>
+   <label id="lbWrap" class="hidden mt-2 text-xs items-center gap-2"><input id="lb" type="checkbox" class="accent-purple-400"> Cinematic letterbox bars</label></div>
+  <div><div class="text-zinc-400 mb-2">Caption style</div><div id="optCap" class="grid grid-cols-2 gap-2"></div>
+   <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+    <span class="flex items-center gap-1">Size <span id="optSize" class="flex rounded-lg border border-zinc-700 overflow-hidden"></span></span>
+    <label class="flex items-center gap-1"><input id="up" type="checkbox" checked class="accent-purple-400"> ALL CAPS</label>
+    <label class="flex items-center gap-1"><input id="safe" type="checkbox" checked class="accent-purple-400"> Safe zone</label></div></div>
+  <div><div class="text-zinc-400 mb-2">Minimum Viral Probability: <b id="thrVal" class="text-emerald-400">85</b>%</div>
+   <input id="thr" type="range" min="70" max="97" value="85" class="w-full accent-emerald-400">
+   <div class="text-xs text-zinc-500 mt-2">Index = 30% hook + 25% pacing + 25% trend + 20% loop. Mock formula for the prototype, not a calibrated prediction.</div></div>
+ </div>
+ <div id="prog" class="hidden mt-6">
+  <div class="h-2 rounded-full bg-zinc-800 overflow-hidden"><div id="bar" class="h-full w-0 bg-gradient-to-r from-emerald-400 to-purple-500 transition-all duration-500"></div></div>
+  <ol id="steps" class="mt-3 grid sm:grid-cols-4 gap-2 text-xs"></ol>
+  <div class="mt-2 text-xs text-zinc-500 mono" id="ramLine"></div>
+ </div>
+</section>
+<section class="mt-8">
+ <div class="flex items-baseline justify-between mb-3"><h2 class="text-lg font-bold">Clips</h2><span id="count" class="text-xs text-zinc-500"></span></div>
+ <div id="grid" class="grid gap-6"></div>
+</section>
+</main>
+
+<aside id="drawer" data-o="0" class="fixed inset-x-0 bottom-0 z-30 bg-zinc-950 border-t border-purple-500/40 transition-transform duration-300 translate-y-[calc(100%-48px)]" style="padding-bottom:env(safe-area-inset-bottom,0px)">
+ <button id="dToggle" class="w-full h-12 px-4 flex items-center justify-between text-sm font-semibold"><span>Pipeline spec and backend code <span id="dClip" class="text-purple-400 font-normal"></span></span><span id="dArrow">Open</span></button>
+ <div class="px-4 pb-4 max-w-7xl mx-auto"><div class="flex flex-wrap gap-2 mb-3" id="dTabs"></div>
+ <pre id="code" class="mono text-xs leading-relaxed bg-zinc-900 border border-zinc-800 rounded-xl p-4 overflow-auto max-h-[38vh] text-emerald-200"></pre></div>
+</aside>
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-20 z-50 hidden rounded-full bg-emerald-400 text-zinc-950 text-sm font-semibold px-4 py-2"></div>
+<div id="modal" class="fixed inset-0 z-50 hidden bg-black/70 p-4 place-items-center">
+ <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-2xl p-4">
+  <div class="flex justify-between mb-2"><b id="mTitle">Export clip</b><button id="mClose" class="text-zinc-400">Close</button></div>
+  <div class="h-1.5 rounded bg-zinc-800 overflow-hidden mb-3"><div id="mBar" class="h-full w-0 bg-emerald-400 transition-all duration-[1400ms]"></div></div>
+  <div id="mTabs" class="flex flex-wrap gap-2 mb-2"></div>
+  <pre id="mBody" class="mono text-xs bg-zinc-950 rounded-xl p-3 overflow-auto max-h-[42vh] text-purple-200 whitespace-pre-wrap"></pre>
+  <div class="mt-3 flex flex-wrap items-center gap-2 text-sm"><button id="mCopy" class="rounded-lg border border-zinc-600 px-3 py-2 hover:border-emerald-400">Copy this tab</button>
+   <button id="mPkg" class="rounded-lg bg-emerald-400 text-zinc-950 font-bold px-3 py-2 hover:bg-emerald-300">Download Package</button><span id="mFiles" class="text-xs text-zinc-500 mono"></span></div>
+ </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CLIPS=[
+{id:1,start:"02:14:15",end:"02:14:58",dur:43,hook:"HE COULD NOT BELIEVE THIS...",hue:[330,260],f:[98,95,96,95],pl:[-1.2,-2.8,.6],
+ words:"No way he just jumped the helicopter into the ocean".split(" "),
+ why:"Audio delta of +14 dB inside the first 1.8 s and a sudden death event match current TikTok gaming retention patterns. The helicopter stunt overlaps a rising GTA 6 search query, and the clip ends on the splash, so it loops cleanly.",
+ titles:["He jumped a helicopter into the ocean in GTA 6","Nobody expected this Vice City stunt","GTA 6 chaos: the 40-second heli leap"],
+ cap:"Chat lost it when this heli jump landed. Would you have survived?",tags:["#GTA6","#ViceCity","#Gaming","#Shorts","#Streamer"]},
+{id:2,start:"04:02:31",end:"04:03:14",dur:43,hook:"FIVE STARS IN 20 SECONDS",hue:[190,280],f:[94,92,90,88],pl:[-.8,-3.1,.9],
+ words:"I had one bullet left and then the train showed up".split(" "),
+ why:"Volume volatility peaks twice (scream at 0:06, laugh at 0:31). Police-chase clips are above baseline in short-form gaming feeds this week. The ending is a punchline, but the cut is slightly abrupt.",
+ titles:["One bullet vs five stars in GTA 6","The train moment that saved the run","GTA 6 police chase goes completely wrong"],
+ cap:"Five stars, one bullet, one very lucky train. Full chase on the channel.",tags:["#GTA6","#PoliceChase","#GamingClips","#Reels","#Twitch"]},
+{id:3,start:"05:41:07",end:"05:41:49",dur:42,hook:"WAIT FOR THE LAST SECOND",hue:[30,320],f:[90,86,84,82],pl:[-1.5,-2.2,1.1],
+ words:"Chat said it was impossible so I did it on a jet ski".split(" "),
+ why:"The hook relies on a chat dare, which keeps the first 3 s intriguing but quieter than the other clips. Jet-ski stunts are a moderate trend match. Payoff lands at 0:40, so loop value is the weakest factor.",
+ titles:["Chat said impossible, so he did it on a jet ski","GTA 6 jet ski jump nobody believed","The last-second Leonida stunt"],
+ cap:"Chat bet against it. Jet ski, one try, zero fear.",tags:["#GTA6","#JetSki","#Leonida","#Viral","#LiveStream"]}];
+const FAC=[["Retention hook",30],["Pacing and emotion",25],["Trend alignment",25],["Loop and re-watch",20]];
+const FMT=[["stack","9:16","A. Stacked: facecam 35% / gameplay 65%"],["full","9:16","B. Full-bleed gameplay, auto-tracking"],["blur","9:16","C. 16:9 centered over blurred zoom"],["h","16:9","16:9 horizontal: direct clean cut"]];
+const CAPS=[["hormozi","Hormozi Pop"],["beast","MrBeast Impact"],["minimal","Minimal Modern"],["neon","Cyberpunk Neon"]];
+const S={plat:"yt",fmt:"stack",cap:"hormozi",size:1,up:true,safe:true,lb:false,thr:85,done:false,sel:1,tab:0,tick:0,play:{},ram:212,j:{1:0,2:0,3:0},busy:false};
+const SAMPLE={yt:"https://www.youtube.com/watch?v=GTA6_LAUNCH_NIGHT",tw:"https://www.twitch.tv/videos/2650011234"};
+S.url=SAMPLE.yt;
+const P=c=>+(.3*c.f[0]+.25*c.f[1]+.25*Math.min(100,c.f[2]+S.j[c.id])+.2*c.f[3]).toFixed(1);
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.remove("hidden");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hidden"),1800)};
+const copy=t=>{try{navigator.clipboard.writeText(t)}catch(e){}toast("Copied")};
+
+function detect(u){
+ if(/^https?:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|live\/)[\w-]{6,}|youtu\.be\/[\w-]{6,})/.test(u))return{p:"yt",k:"YouTube live/VOD"};
+ if(/^https?:\/\/(www\.)?twitch\.tv\/videos\/\d+/.test(u))return{p:"tw",k:"Twitch VOD"};
+ if(/^https?:\/\/(www\.)?twitch\.tv\/\w+\/clip\/[\w-]+|^https?:\/\/clips\.twitch\.tv\/[\w-]+/.test(u))return{p:"tw",k:"Twitch clip"};
+ return null;}
+function validate(){
+ const d=detect($("#url").value.trim());S.url=$("#url").value.trim();
+ if(d&&d.p!==S.plat){S.plat=d.p;plat();}
+ $("#valid").innerHTML=d?`<span class="text-emerald-400">Valid: ${d.k}</span>`:`<span class="text-amber-400">Not recognized. Paste a ${S.plat==="yt"?"youtube.com/watch?v=, /live/ or youtu.be link":"twitch.tv/videos/ID, twitch.tv/name/clip/slug or clips.twitch.tv link"}.</span>`;
+ $("#go").disabled=!d||S.busy;S.kind=d&&d.k;code();}
+function plat(){
+ $("#plat").innerHTML=[["yt","YouTube"],["tw","Twitch"]].map(([v,l])=>`<button data-v="${v}" class="px-4 py-1.5 rounded-lg ${S.plat===v?"bg-purple-500/30 text-white":"text-zinc-400"}">${l}</button>`).join("");
+ $("#plat").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.plat=b.dataset.v;$("#url").value=SAMPLE[S.plat];plat();validate();});
+ $("#url").placeholder=S.plat==="yt"?"https://www.youtube.com/watch?v=...":"https://www.twitch.tv/videos/...";}
+function status(){
+ $("#status").innerHTML=[["Python 3.12","Active"],["FFmpeg","Ready"],["Gemini Flash API","Connected"],["RAM Guard","<"+Math.round(S.ram)+" MB active"]].map(([a,b])=>`<span class="flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1"><i class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></i>${a} <b class="text-emerald-400 font-medium">${b}</b></span>`).join("");}
+function pick(el,list,key,fn){
+ $(el).innerHTML=list.map(([v,a,b])=>`<button data-v="${v}" class="text-left rounded-xl border px-3 py-2 text-sm transition ${String(S[key])===String(v)?"border-purple-400 bg-purple-500/15 text-white":"border-zinc-700 text-zinc-400 hover:border-zinc-500"}">${b?`<b class="mr-1 text-emerald-300">${a}</b>${b}`:a}</button>`).join("");
+ $(el).querySelectorAll("button").forEach(b=>b.onclick=()=>{S[key]=b.dataset.v;fn();});}
+function opts(){
+ pick("#optFmt",FMT,"fmt",opts2);pick("#optCap",CAPS,"cap",opts2);
+ $("#optSize").innerHTML=["S","M","L"].map((l,i)=>`<button data-i="${i}" class="px-2 py-1 ${S.size===i?"bg-purple-500/40":""}">${l}</button>`).join("");
+ $("#optSize").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.size=+b.dataset.i;opts2();});
+ $("#lbWrap").classList.toggle("hidden",S.fmt!=="h");$("#lbWrap").classList.toggle("flex",S.fmt==="h");}
+function opts2(){opts();grid();code();}
+
+function player(c){
+ const v=S.fmt!=="h",[h1,h2]=c.hue;
+ const face=`<div class="absolute inset-0" style="background:linear-gradient(135deg,hsl(${h2} 60% 25%),#18181b)"><div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="animation:bob 1.2s ease-in-out infinite"><div class="w-12 h-12 rounded-full bg-amber-200 mx-auto"></div><div class="w-20 h-8 rounded-t-full bg-zinc-700 -mt-1"></div></div><span class="absolute left-2 bottom-1 text-[10px] bg-red-500 rounded px-1">LIVE</span></div>`;
+ const game=`<div class="absolute inset-0 overflow-hidden" style="background:linear-gradient(180deg,hsl(${h1} 90% 55%),hsl(${h2} 80% 30%) 55%,#0c0a1a 55%)"><div class="absolute left-1/2 top-[18%] w-12 h-12 rounded-full bg-yellow-200/90 -translate-x-1/2"></div><div class="absolute bottom-[10%] left-0 h-1 road"></div><div class="absolute bottom-[22%] left-1/2 w-10 h-4 rounded bg-black/70" style="animation:bob .5s infinite"></div><div class="absolute top-2 right-2 w-9 h-9 rounded-full border-2 border-white/60 bg-black/40 grid place-items-center text-[9px]">N</div><div class="absolute bottom-2 left-2 text-[10px] mono text-white/80">$ 14,250</div></div>`;
+ let b;
+ if(S.fmt==="stack")b=`<div class="absolute top-0 inset-x-0 h-[35%]">${face}</div><div class="absolute bottom-0 inset-x-0 h-[65%] border-t-2 border-emerald-400/70">${game}</div>`;
+ else if(S.fmt==="full")b=`<div class="absolute inset-0 scale-[1.6]">${game}</div><div class="absolute w-[38%] h-[34%] border-2 border-dashed border-emerald-400 rounded" style="top:30%;animation:trk 3s ease-in-out infinite alternate"><span class="absolute -top-4 left-0 text-[9px] text-emerald-300 mono">AUTO-TRACK</span></div>`;
+ else if(S.fmt==="blur")b=`<div class="absolute inset-0 scale-150 blur-xl opacity-80">${game}</div><div class="absolute top-1/2 -translate-y-1/2 inset-x-0 aspect-video shadow-2xl">${game}<div class="absolute right-1 bottom-1 w-14 h-10 rounded overflow-hidden">${face}</div></div>`;
+ else b=`${game}<div class="absolute right-2 bottom-[14%] w-[16%] aspect-video rounded overflow-hidden border border-white/30">${face}</div>`+(S.lb?`<div class="absolute top-0 inset-x-0 h-[12%] bg-black"></div><div class="absolute bottom-0 inset-x-0 h-[12%] bg-black"></div>`:"");
+ const safe=v&&S.safe?`<div class="absolute right-0 top-[42%] bottom-[20%] w-[15%] border border-dashed border-red-400/60 bg-red-500/10 text-[8px] text-red-300 text-center pt-1">UI</div><div class="absolute bottom-0 inset-x-0 h-[20%] border-t border-dashed border-red-400/60 bg-red-500/10 text-[8px] text-red-300 pl-1">caption, username</div>`:"";
+ const top=v?3:(S.lb?15:4),ctop=v?(S.safe?50:62):(S.lb?66:72);
+ return `<div class="pl relative mx-auto w-full ${v?"max-w-[270px] aspect-[9/16] rounded-3xl":"aspect-video rounded-xl"} overflow-hidden border-4 border-zinc-800 bg-black ${S.play[c.id]===false?"paused":""}">
+ ${b}<div class="absolute inset-x-3 rounded-lg bg-black/70 px-2 py-1.5 text-center font-extrabold text-white" style="top:${top}%;font-size:${v?11:12}px">${esc(c.hook)}</div>
+ ${safe}<div class="absolute inset-x-3 text-center leading-tight cap" data-c="${c.id}" style="top:${ctop}%;font-size:${v?[7,9,11.5][S.size]:[3.2,4.2,5.5][S.size]}cqw;${S.up?"text-transform:uppercase":""}"></div>
+ <div class="absolute bottom-0 inset-x-0 h-1 bg-white/20"><div class="h-full bg-emerald-400" data-b="${c.id}"></div></div>
+ <button data-pp="${c.id}" class="absolute bottom-3 left-3 w-8 h-8 rounded-full bg-black/60 text-white text-[10px]" aria-label="Play or pause">${S.play[c.id]===false?"Play":"II"}</button></div>`;}
+function word(w,on,k,gi){
+ const s=S.cap;
+ if(s==="hormozi")return `<span class="${on?"pop":""}" style="font-weight:900;color:${on?"#facc15":"#fff"};text-shadow:0 0 ${on?".5em":"0"} #22c55e;-webkit-text-stroke:.12em #000;paint-order:stroke fill">${w}</span>`;
+ if(s==="beast")return `<span class="${on?"bnc":""}" style="font-family:Impact,'Arial Narrow',sans-serif;letter-spacing:.02em;color:${gi%2?"#ef4444":"#fff"};-webkit-text-stroke:.1em #000;paint-order:stroke fill">${w}</span>`;
+ if(s==="minimal")return `<span style="display:inline-block;margin:.08em;background:rgba(0,0,0,.65);padding:.08em .4em;border-radius:.5em;font-family:Inter,Helvetica,Arial,sans-serif;font-weight:600;color:${on?"#fff":"#a1a1aa"}">${w}</span>`;
+ return `<span style="font-weight:800;letter-spacing:.04em;color:${on?"#ff2bd6":"#22d3ee"};text-shadow:0 0 .3em currentColor,0 0 .8em currentColor">${w}</span>`;}
+function caps(){
+ CLIPS.forEach(c=>{const el=document.querySelector(`[data-c="${c.id}"]`);if(!el||S.play[c.id]===false)return;
+  const i=S.tick%c.words.length,s=Math.floor(i/3)*3;
+  el.innerHTML=c.words.slice(s,s+3).map((w,k)=>word(w,s+k===i,k,s+k)).join(" ");
+  const b=document.querySelector(`[data-b="${c.id}"]`);if(b)b.style.width=((i+1)/c.words.length*100)+"%";});}
+function live(){
+ CLIPS.forEach(c=>{S.j[c.id]=+(Math.sin(Date.now()/4000+c.id)*1.4).toFixed(1);const p=P(c);
+  const a=document.querySelector(`[data-pv="${c.id}"]`);if(a)a.textContent=p.toFixed(1);
+  const r=document.querySelector(`[data-ring="${c.id}"]`);if(r)r.setAttribute("stroke-dasharray",(p/100*226.2)+" 226.2");
+  const t=document.querySelector(`[data-tr="${c.id}"]`);if(t){t.style.width=Math.min(100,c.f[2]+S.j[c.id])+"%";}});}
+function grid(){
+ const g=$("#grid"),list=CLIPS.filter(c=>Math.round(P(c))>=S.thr);
+ g.className="grid gap-6 "+(S.fmt==="h"?"lg:grid-cols-2":"sm:grid-cols-2 xl:grid-cols-3");
+ $("#count").textContent=S.done?`${list.length} of ${CLIPS.length} clips at ${S.thr}%+`:"";
+ if(!S.done||!list.length){g.innerHTML=`<div class="col-span-full rounded-2xl border border-dashed border-zinc-700 p-10 text-center text-zinc-400">${S.done?"No clip reaches "+S.thr+"%. Lower the threshold to see more.":"Paste a link and press <b class=text-emerald-400>Fetch &amp; Analyze</b>. Your best clips will appear here."}</div>`;return;}
+ g.innerHTML=list.map(c=>{const p=P(c);return `
+ <article class="rounded-2xl border ${S.sel===c.id?"border-purple-400/70":"border-zinc-800"} bg-zinc-900/70 p-4 flex flex-col gap-4">
+  ${player(c)}
+  <div class="flex items-center gap-3">
+   <svg viewBox="0 0 80 80" class="w-20 h-20 shrink-0 -rotate-90"><circle cx="40" cy="40" r="36" fill="none" stroke="#27272a" stroke-width="7"/><circle data-ring="${c.id}" cx="40" cy="40" r="36" fill="none" stroke="#34d399" stroke-width="7" stroke-linecap="round" stroke-dasharray="${p/100*226.2} 226.2" style="filter:drop-shadow(0 0 5px #10b981)"/></svg>
+   <div class="flex-1"><div class="text-2xl font-extrabold text-emerald-300"><span data-pv="${c.id}">${p.toFixed(1)}</span>%</div><div class="text-xs text-zinc-400">Viral chance</div>
+    <div class="mono text-[11px] mt-1 text-zinc-300">${c.start} - ${c.end}, ${c.dur}s</div></div>
+  </div>
+  <div class="grid grid-cols-3 gap-2 text-center text-xs">${[["Shorts",0],["Reels",1],["TikTok",2]].map(([n,i])=>`<div class="rounded-lg bg-zinc-950 border border-zinc-800 py-1.5"><div class="text-zinc-500">${n}</div><b>${Math.min(99.4,p+c.pl[i]).toFixed(1)}%</b></div>`).join("")}</div>
+  <details class="rounded-xl bg-zinc-950 border border-zinc-800" ${c.id===1?"open":""}>
+   <summary class="px-3 py-2 text-sm font-semibold">Predictive reasoning</summary>
+   <div class="px-3 pb-3 text-xs grid gap-2">${FAC.map(([n,w],i)=>{const val=i===2?Math.min(100,c.f[2]+S.j[c.id]):c.f[i];return `<div><div class="flex justify-between mb-1"><span>${n} <span class="text-zinc-500">(${w}%)</span></span><span class="mono">${val.toFixed(0)}</span></div><div class="h-1.5 rounded bg-zinc-800"><div ${i===2?`data-tr="${c.id}"`:""} class="h-full rounded bg-gradient-to-r from-emerald-400 to-purple-500" style="width:${val}%"></div></div></div>`}).join("")}
+   <p class="text-zinc-300 leading-relaxed mt-1">${esc(c.why)}</p></div>
+  </details>
+  <div>${c.titles.map(t=>`<div class="flex items-center gap-2 text-sm py-1"><span class="flex-1">${esc(t)}</span><button data-copy="${esc(t)}" class="text-xs rounded-lg border border-zinc-700 px-2 py-1 hover:border-emerald-400">Copy</button></div>`).join("")}</div>
+  <div class="rounded-xl bg-zinc-950 border border-zinc-800 p-3 text-sm"><div>${esc(c.cap)}</div><div class="text-purple-300 mt-1">${c.tags.join(" ")}</div>
+   <button data-copy="${esc(c.cap+"\n\n"+c.tags.join(" "))}" class="mt-2 text-xs rounded-lg border border-zinc-700 px-2 py-1 hover:border-emerald-400">Copy caption and tags</button></div>
+  <div class="grid grid-cols-2 gap-2 text-sm"><button data-exp="${c.id}" class="rounded-xl bg-emerald-400 text-zinc-950 font-bold py-2 hover:bg-emerald-300 active:scale-95 transition">Export Clip</button>
+   <button data-insp="${c.id}" class="rounded-xl border border-zinc-600 py-2 hover:border-purple-400 transition">Inspect code</button></div>
+ </article>`}).join("");
+ g.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copy(b.dataset.copy));
+ g.querySelectorAll("[data-exp]").forEach(b=>b.onclick=()=>exportClip(+b.dataset.exp));
+ g.querySelectorAll("[data-insp]").forEach(b=>b.onclick=()=>{S.sel=+b.dataset.insp;grid();code();drawer(true)});
+ g.querySelectorAll("[data-pp]").forEach(b=>b.onclick=()=>{const i=+b.dataset.pp;S.play[i]=S.play[i]===false;grid()});
+ caps();}
+
+/* Backend generators */
+const ASS={hormozi:"Fontname=Impact,PrimaryColour=&H0015CCFA,OutlineColour=&H00000000,Outline=4,Shadow=1",beast:"Fontname=Anton,PrimaryColour=&H002020FF,OutlineColour=&H00000000,Outline=4,Bold=1",minimal:"Fontname=Inter,PrimaryColour=&H00FFFFFF,BorderStyle=3,BackColour=&H99000000,Outline=0",neon:"Fontname=Orbitron,PrimaryColour=&H00FFFF00,OutlineColour=&H00FF00FF,Outline=3,Blur=2"};
+function ff(c){
+ const v=S.fmt!=="h",res=v?"1080x1920":"1920x1080",fs=Math.round([16,22,28][S.size]*(v?1:1.2)),mv=v?(S.safe?480:300):60;
+ const G={stack:"[0:v]crop=iw*0.22:ih*0.3:iw*0.78:ih*0.7,scale=1080:672[face];  # adjust facecam box\n  [0:v]crop=ih*9/16:ih,scale=1080:1248[game];\n  [face][game]vstack[v0]",
+  full:"[0:v]sendcmd=f=work/track_"+c.id+".cmd,crop@t=ih*9/16:ih:0:0,scale=1080:1920[v0]  # OpenCV tracker writes x offsets",
+  blur:"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=40:5[bg];\n  [0:v]scale=1080:-2[fg];\n  [bg][fg]overlay=(W-w)/2:(H-h)/2[v0]",
+  h:"[0:v]scale=1920:1080"+(S.lb?",drawbox=x=0:y=0:w=iw:h=ih*0.12:color=black:t=fill,drawbox=x=0:y=ih*0.88:w=iw:h=ih*0.12:color=black:t=fill":"")+"[v0]"}[S.fmt];
+ const out=`output/clip_${c.id}_${v?"9x16":"16x9"}.mp4`;
+ return `# ${res}, ${S.cap} captions, size ${["S","M","L"][S.size]}${S.up?", ALL CAPS":""}${v&&S.safe?", safe zone on":""}
+ffmpeg -y -i work/clip_${c.id}.mp4 -filter_complex "
+  ${G};
+  [v0]subtitles=work/clip_${c.id}.ass:force_style='${ASS[S.cap]},Fontsize=${fs},Alignment=2,MarginV=${mv}'[out]" \\
+  -map "[out]" -map 0:a -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p \\
+  -c:a aac -b:a 160k -t ${c.dur} -movflags +faststart ${out}`;}
+const ts=s=>{const m=Math.floor(s/60),x=(s%60).toFixed(3).replace(".",",");return `00:${String(m).padStart(2,"0")}:${x.padStart(6,"0")}`};
+function srt(c){const w=c.words,o=[];for(let i=0;i<w.length;i+=3)o.push(`${o.length+1}\n${ts(i*.45)} --> ${ts(Math.min(i+3,w.length)*.45)}\n${w.slice(i,i+3).join(" ")[S.up?"toUpperCase":"toString"]()}\n`);return o.join("\n");}
+function meta(c){const p=P(c),d=t=>({title:c.titles[t],description:c.cap,tags:c.tags});
+ return JSON.stringify({clip:c.id,source:S.url,platform:S.plat==="yt"?"youtube":"twitch",start:c.start,end:c.end,duration_s:c.dur,
+  viral_probability:p,factors:Object.fromEntries(FAC.map(([n],i)=>[n.toLowerCase().replace(/ /g,"_"),c.f[i]])),
+  render:{format:S.fmt,resolution:S.fmt==="h"?"1920x1080":"1080x1920",captions:S.cap,all_caps:S.up,safe_zone:S.safe},
+  publish:{youtube_shorts:d(0),instagram_reels:d(1),tiktok:d(2)}},null,2);}
+
+/* Export modal */
+let MT=0,MC=1;
+function mshow(){
+ const c=CLIPS.find(x=>x.id===MC),T=[["FFmpeg command",ff(c)],["Subtitles (.srt)",srt(c)],["metadata.json",meta(c)]];
+ $("#mTabs").innerHTML=T.map(([n],i)=>`<button data-i="${i}" class="text-xs rounded-lg px-3 py-1.5 border ${MT===i?"border-purple-400 bg-purple-500/20":"border-zinc-700 text-zinc-400"}">${n}</button>`).join("");
+ $("#mTabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{MT=+b.dataset.i;mshow()});
+ $("#mBody").textContent=T[MT][1];$("#mCopy").onclick=()=>copy(T[MT][1]);
+ $("#mFiles").textContent="";
+ $("#mPkg").onclick=()=>{const n=`clip_${c.id}`;$("#mFiles").textContent=`${n}.mp4 (18.4 MB), ${n}.ass, ${n}.srt, metadata.json`;toast("Package saved to /output/"+n+" (simulated)")};}
+function exportClip(id){
+ MC=id;MT=0;$("#mTitle").textContent="Export clip "+id;$("#modal").classList.remove("hidden");$("#modal").classList.add("grid");
+ $("#mBar").style.transitionDuration="0s";$("#mBar").style.width="0";void $("#mBar").offsetWidth;$("#mBar").style.transitionDuration="1400ms";$("#mBar").style.width="100%";mshow();}
+$("#mClose").onclick=()=>{$("#modal").classList.add("hidden");$("#modal").classList.remove("grid")};
+
+/* Drawer */
+const TABS=["1 Ingest","2 Score","3 Download","4 Render"];
+function code(){
+ const c=CLIPS.find(x=>x.id===S.sel)||CLIPS[0],url=S.url,tw=S.plat==="tw";
+ $("#dClip").textContent="for clip "+c.id+" ("+P(c)+"%)";
+ $("#dTabs").innerHTML=TABS.map((t,i)=>`<button data-t="${i}" class="text-xs rounded-lg px-3 py-1.5 border ${S.tab===i?"border-purple-400 bg-purple-500/20":"border-zinc-700 text-zinc-400"}">${t}</button>`).join("");
+ $("#dTabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.tab=+b.dataset.t;code()});
+ const T=[tw?`# Step 1 (Twitch): VODs have no auto-captions, so transcribe locally
+TwitchDownloaderCLI chatdownload --id ${(url.match(/videos\/(\d+)/)||[0,"VOD_ID"])[1]} -o work/chat.json   # chat replay
+yt-dlp -f audio_only --extract-audio --audio-format wav --postprocessor-args "-ar 16000 -ac 1" "${url}"
+faster-whisper work/audio.wav --model small --compute_type int8     # fits in 8 GB RAM
+# merge: transcript + chat messages/sec + loudness spikes -> text for Gemini`:`# Step 1 (YouTube): captions + live chat replay, no video download
+yt-dlp --skip-download --write-auto-subs --sub-langs "en,live_chat" --sub-format json3 "${url}" -o "work/%(id)s"
+# parse json3 -> "[seconds] text" lines (~60k words), chat messages/sec -> spike list
+# RAM guard: assert psutil.Process().memory_info().rss < 150 * 2**20`,
+`# Step 2: one-shot scoring with Gemini Flash
+prompt = f"""Pick the top 3 clips of 30-45 s. For each, rate 0-100:
+hook (first 3 s), pacing, trend_alignment (vs. this week's GTA 6 topics), loop.
+Return JSON: [{{start, end, hook, factors, why, titles[3]}}]
+{transcript}"""
+# Computed locally (so you can tune the weights):
+index = 0.30*hook + 0.25*pacing + 0.25*trend + 0.20*loop   # clip ${c.id}: ${P(c)}
+# NOTE: trend data must come from a source you pass in (e.g. Google Trends); Gemini cannot see live trends alone.`,
+`# Step 3: download ONLY the winning segment
+yt-dlp "${url}" --download-sections "*${c.start}-${c.end}" --force-keyframes-at-cuts \\
+  -f "bv*[height<=1080]+ba/b" -o "work/clip_${c.id}.%(ext)s"
+# ${c.dur} s of video instead of hours`,ff(c)];
+ $("#code").textContent=T[S.tab];}
+function drawer(o){const d=$("#drawer");d.classList.toggle("translate-y-[calc(100%-48px)]",!o);d.classList.toggle("translate-y-0",o);$("#dArrow").textContent=o?"Close":"Open";d.dataset.o=o?1:0;}
+$("#dToggle").onclick=()=>drawer($("#drawer").dataset.o!=="1");
+
+/* Fetch and analyze simulation */
+const STEPS=["Metadata extraction","Chat replay parsing","Transcript generation","Viral Probability scoring"];
+function run(){
+ if(S.busy)return;S.busy=true;S.done=false;grid();$("#go").disabled=true;$("#go").textContent="Analyzing...";$("#prog").classList.remove("hidden");
+ const tw=S.plat==="tw",clip=S.kind==="Twitch clip";let i=0;
+ const L=[clip?"Clip: 38 s, 1,204 views, GTA VI":"VOD: 6 h 12 m, 1080p60, GTA VI, 18,420 peak viewers",
+  tw?"Parsing 212,904 chat messages, 311 emote spikes (LUL, KEKW)":"Parsing 48,300 live chat messages, 96 reaction bursts",
+  tw?"Whisper small (int8) on 16 kHz audio: 61,420 words":"Fetching auto-captions: 61,420 words, 4,210 volume spikes",
+  "Weighting hook 30 / pacing 25 / trend 25 / loop 20 against trending GTA 6 queries"];
+ const draw=()=>{$("#steps").innerHTML=STEPS.map((s,k)=>`<li class="rounded-lg border px-3 py-2 ${k<i?"border-emerald-400/60 text-emerald-300":k===i?"border-purple-400 text-white animate-pulse":"border-zinc-800 text-zinc-500"}">Step ${k+1}: ${s}${k<i?" (done)":""}</li>`).join("");
+  $("#bar").style.width=(Math.min(i,4)/4*100)+"%";$("#ramLine").textContent=i<4?L[i]:"Done. Peak RAM "+Math.round(S.ram)+" MB. Total cost: $0.00";};
+ draw();const t=setInterval(()=>{i++;draw();if(i>=4){clearInterval(t);S.done=true;S.busy=false;$("#go").textContent="Fetch & Analyze";validate();grid();toast("3 clips ready")}},1200);}
+$("#go").onclick=run;$("#url").oninput=validate;
+$("#thr").oninput=e=>{S.thr=+e.target.value;$("#thrVal").textContent=S.thr;grid()};
+$("#up").onchange=e=>{S.up=e.target.checked;opts2()};$("#safe").onchange=e=>{S.safe=e.target.checked;opts2()};$("#lb").onchange=e=>{S.lb=e.target.checked;opts2()};
+$("#url").value=S.url;plat();opts();validate();status();grid();code();
+setInterval(()=>{S.tick++;caps()},420);setInterval(()=>{S.ram=190+Math.random()*45;status()},2500);setInterval(live,1500);
+</script></body></html>

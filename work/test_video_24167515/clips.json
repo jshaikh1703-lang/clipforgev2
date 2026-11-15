@@ -1,0 +1,30 @@
+[
+  {
+    "start_s": 200.0,
+    "end_s": 240.0,
+    "start": "00:03:20",
+    "end": "00:04:00",
+    "duration_s": 40,
+    "viral_probability": 90.2,
+    "factors": {
+      "hook": 95.0,
+      "pacing": 90.0,
+      "trend": 85.0,
+      "loop": 90.0
+    },
+    "why": "The best test clip ever.",
+    "hook_text": "CRAZY TEST CLIP 3",
+    "titles": [
+      "Test Clip 3",
+      "Final Test",
+      "Epic"
+    ],
+    "caption": "The best test clip!",
+    "hashtags": [
+      "#test3",
+      "#epic"
+    ],
+    "id": 1,
+    "download_cmd": "yt-dlp \"https://www.twitch.tv/videos/2924167515\" --download-sections \"*00:03:20-00:04:00\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_1.%(ext)s\""
+  }
+]

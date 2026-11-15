@@ -1,0 +1,48 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,64,&H0000E6FF&,&H00FFFFFF&,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,5,3,2,70,70,345,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.56,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf28}POLE {\kf64}SHIFTED {\kf64}TOWARDS
+Dialogue: 0,0:00:01.56,0:00:02.97,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf64}SIBERIA. {\kf38}NOW, {\kf38}YOU
+Dialogue: 0,0:00:02.97,0:00:04.12,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf38}MIGHT {\kf38}NOT {\kf38}FIND
+Dialogue: 0,0:00:04.12,0:00:05.28,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf38}THIS {\kf39}VERY {\kf38}INTERESTING,
+Dialogue: 0,0:00:05.28,0:00:06.15,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}BUT {\kf29}THE {\kf29}PROBLEM
+Dialogue: 0,0:00:06.15,0:00:07.02,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}IS {\kf29}THAT {\kf29}THIS
+Dialogue: 0,0:00:07.02,0:00:07.89,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}IS {\kf29}WHERE {\kf29}THE
+Dialogue: 0,0:00:07.89,0:00:08.76,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}REAL {\kf29}FEAR {\kf29}BEGINS.
+Dialogue: 0,0:00:08.76,0:00:09.95,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf40}BECAUSE {\kf40}SOMETIMES, {\kf40}THIS
+Dialogue: 0,0:00:09.95,0:00:11.15,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf40}TUG {\kf40}OF {\kf40}WAR
+Dialogue: 0,0:00:11.15,0:00:12.34,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf40}GETS {\kf40}SO {\kf40}EXTREME
+Dialogue: 0,0:00:12.34,0:00:14.16,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf61}THAT {\kf61}THESE {\kf61}MAGNETIC
+Dialogue: 0,0:00:14.16,0:00:15.74,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf61}POLES {\kf61}FLIP. {\kf36}AND
+Dialogue: 0,0:00:15.74,0:00:16.82,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}THIS {\kf36}HAS {\kf36}HAPPENED
+Dialogue: 0,0:00:16.82,0:00:18.25,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}BEFORE, {\kf53}HUNDREDS {\kf53}OF
+Dialogue: 0,0:00:18.25,0:00:21.49,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf53}TIMES. {\kf47}IN {\kf47}1905,
+Dialogue: 0,0:00:21.49,0:00:22.91,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf47}A {\kf47}FRENCH {\kf47}PHYSICIST,
+Dialogue: 0,0:00:22.91,0:00:24.42,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf47}BERNARD {\kf47}BRUNHES, {\kf56}FOUND
+Dialogue: 0,0:00:24.42,0:00:26.08,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf56}SOMETHING {\kf56}VERY {\kf56}INTERESTING
+Dialogue: 0,0:00:26.08,0:00:27.75,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf56}IN {\kf56}A {\kf56}VILLAGE
+Dialogue: 0,0:00:27.75,0:00:29.31,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf56}CALLED {\kf56}PONTFAREIN. {\kf45}DURING
+Dialogue: 0,0:00:29.31,0:00:30.65,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf45}DIGGING {\kf45}FOR {\kf45}A
+Dialogue: 0,0:00:30.65,0:00:31.91,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf45}ROAD, {\kf41}A {\kf41}LAYER
+Dialogue: 0,0:00:31.91,0:00:33.13,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf41}OF {\kf41}LAVA {\kf41}WAS
+Dialogue: 0,0:00:33.13,0:00:34.35,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf41}FOUND {\kf41}RIGHT {\kf41}ABOVE
+Dialogue: 0,0:00:34.35,0:00:35.57,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf41}THE {\kf41}TERRACOTTA, {\kf41}OR
+Dialogue: 0,0:00:35.57,0:00:36.62,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf41}SOLID {\kf41}SOIL. {\kf24}BRUNHES
+Dialogue: 0,0:00:36.62,0:00:37.36,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}WAS {\kf24}LOOKING {\kf24}FOR
+Dialogue: 0,0:00:37.36,0:00:38.09,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}THAT {\kf24}SPECIFIC {\kf24}LAYER
+Dialogue: 0,0:00:38.09,0:00:38.87,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}OF {\kf24}SOIL. {\kf29}BECAUSE
+Dialogue: 0,0:00:38.87,0:00:39.72,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}WHEN {\kf29}LAVA {\kf29}FLOWS
+Dialogue: 0,0:00:39.72,0:00:40.58,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}AND {\kf29}COOLS {\kf29}DOWN,
+Dialogue: 0,0:00:40.58,0:00:41.78,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf40}THE {\kf40}MAGNETIC {\kf40}PARTICLES
+Dialogue: 0,0:00:41.78,0:00:42.89,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf40}INSIDE {\kf40}IT {\kf31}FREEZE
+Dialogue: 0,0:00:42.89,0:00:43.82,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf31}IN {\kf31}THE {\kf31}DIRECTION
+Dialogue: 0,0:00:43.82,0:00:44.76,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf31}OF {\kf31}THE {\kf31}MAGNETIC
+Dialogue: 0,0:00:44.76,0:00:45.00,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}FIELD

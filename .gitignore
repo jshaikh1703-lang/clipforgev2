@@ -1,0 +1,4 @@
+.env
+clipforge.sqlite3
+clipforge.sqlite3-shm
+clipforge.sqlite3-wal

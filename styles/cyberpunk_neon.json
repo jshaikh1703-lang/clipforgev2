@@ -1,0 +1,8 @@
+{
+  "font_weight": "bold",
+  "font_name": "Arial",
+  "primary_hex": "#F8F7FF",
+  "highlight_hex": "#FF38D1",
+  "safe_zone_margin_percent": 20,
+  "zoom_intensity": 0.02
+}

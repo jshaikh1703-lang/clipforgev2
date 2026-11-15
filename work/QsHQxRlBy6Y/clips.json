@@ -1,0 +1,281 @@
+[
+  {
+    "start_s": 545.0,
+    "end_s": 585.0,
+    "start": "00:09:05",
+    "end": "00:09:45",
+    "duration_s": 40,
+    "viral_probability": 79.0,
+    "factors": {
+      "hook": 90.0,
+      "pacing": 79.0,
+      "trend": 65.0,
+      "loop": 80.0
+    },
+    "why": "Hook at 00:09:09 explains runway numbering based on magnetic headings, then shows how shifting poles force airports to rename runways, ending with the future change in 2033. The practical impact makes it highly shareable.",
+    "hook_text": "RUNWAY NUMBERS DEPEND ON MAGNETIC NORTH",
+    "titles": [
+      "How Magnetic Shifts Change Airport Runways",
+      "Why Runway Numbers Keep Changing",
+      "Magnetic Pole vs. Flight Paths"
+    ],
+    "caption": "Your next flight might land on a different runway! \u2708\ufe0f",
+    "hashtags": [
+      "#Aviation",
+      "#Science",
+      "#Magnetism",
+      "#Travel",
+      "#Shorts"
+    ],
+    "id": 1,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:09:05-00:09:45\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_1.%(ext)s\""
+  },
+  {
+    "start_s": 940.0,
+    "end_s": 980.0,
+    "start": "00:15:40",
+    "end": "00:16:20",
+    "duration_s": 40,
+    "viral_probability": 78.4,
+    "factors": {
+      "hook": 89.0,
+      "pacing": 80.0,
+      "trend": 62.0,
+      "loop": 81.0
+    },
+    "why": "Hook at 00:15:45 introduces the Laschamp excursion, then details that Earth's magnetic field dropped to 0\u20116% strength, ending with the link to species extinctions.",
+    "hook_text": "LASCHAMP EXCURSION WEAKENED FIELD",
+    "titles": [
+      "The 42,000\u2011Year Magnetic Crisis",
+      "Laschamp: When Earth's Shield Faded",
+      "How a Weak Field Threatened Life"
+    ],
+    "caption": "A brief magnetic blackout that changed history \u26a1",
+    "hashtags": [
+      "#Science",
+      "#History",
+      "#Magnetism",
+      "#Extinction",
+      "#Shorts"
+    ],
+    "id": 2,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:15:40-00:16:20\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_2.%(ext)s\""
+  },
+  {
+    "start_s": 245.0,
+    "end_s": 285.0,
+    "start": "00:04:05",
+    "end": "00:04:45",
+    "duration_s": 40,
+    "viral_probability": 77.1,
+    "factors": {
+      "hook": 92.0,
+      "pacing": 78.0,
+      "trend": 60.0,
+      "loop": 75.0
+    },
+    "why": "The segment starts at the hook line at 00:04:11 describing molten iron as the source of Earth's magnetic field, and continues with the explanation of the invisible shield protecting us. The loud signal at 00:04:23 reinforces the dramatic reveal, making it a strong hook.",
+    "hook_text": "MOLTEN IRON CREATES EARTH'S MAGNET",
+    "titles": [
+      "Why Earth Has a Magnetic Shield",
+      "The Hidden Magnet Inside Our Planet",
+      "Molten Iron Powers Earth's Field"
+    ],
+    "caption": "The secret behind Earth's invisible shield \ud83c\udf0d\u26a1",
+    "hashtags": [
+      "#Science",
+      "#Earth",
+      "#Magnetism",
+      "#Space",
+      "#Shorts"
+    ],
+    "id": 3,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:04:05-00:04:45\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_3.%(ext)s\""
+  },
+  {
+    "start_s": 286.0,
+    "end_s": 333.0,
+    "start": "00:04:46",
+    "end": "00:05:33",
+    "duration_s": 47,
+    "viral_probability": 76.5,
+    "factors": {
+      "hook": 88.0,
+      "pacing": 80.0,
+      "trend": 58.0,
+      "loop": 78.0
+    },
+    "why": "Hook at 00:04:31 introduces the common misconception between magnetic and geographic poles, then clarifies that the magnetic north is actually a magnetic south. The segment ends with the surprising fact, creating a clean loop.",
+    "hook_text": "MAGNETIC NORTH VS GEO NORTH",
+    "titles": [
+      "Magnetic vs Geographic North Pole",
+      "The Truth About Earth's Poles",
+      "Why North Isn't Where You Think"
+    ],
+    "caption": "North Pole confusion? Let's set it straight! \ud83e\udded",
+    "hashtags": [
+      "#Science",
+      "#Geography",
+      "#Magnetism",
+      "#Education",
+      "#Shorts"
+    ],
+    "id": 4,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:04:46-00:05:33\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_4.%(ext)s\""
+  },
+  {
+    "start_s": 805.0,
+    "end_s": 845.0,
+    "start": "00:13:25",
+    "end": "00:14:05",
+    "duration_s": 40,
+    "viral_probability": 75.2,
+    "factors": {
+      "hook": 86.0,
+      "pacing": 78.0,
+      "trend": 58.0,
+      "loop": 77.0
+    },
+    "why": "Hook at 00:13:31 describes zebra\u2011like magnetic stripes on the seafloor, then explains how they act as a tape recorder of Earth's magnetic field, concluding with the visual of mirrored patterns.",
+    "hook_text": "SEAFLOOR RECORDS MAGNETIC HISTORY",
+    "titles": [
+      "Zebra Stripes on the Ocean Floor",
+      "How the Seafloor Stores Magnetic Data",
+      "Earth's Underwater Magnetic Tape"
+    ],
+    "caption": "The ocean floor keeps a magnetic diary \ud83d\udcd6",
+    "hashtags": [
+      "#Science",
+      "#Ocean",
+      "#Magnetism",
+      "#Geology",
+      "#Shorts"
+    ],
+    "id": 5,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:13:25-00:14:05\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_5.%(ext)s\""
+  },
+  {
+    "start_s": 640.0,
+    "end_s": 680.0,
+    "start": "00:10:40",
+    "end": "00:11:20",
+    "duration_s": 40,
+    "viral_probability": 74.9,
+    "factors": {
+      "hook": 87.0,
+      "pacing": 76.0,
+      "trend": 60.0,
+      "loop": 74.0
+    },
+    "why": "Hook at 00:10:44 asks why the pole is accelerating, then describes the tug\u2011of\u2011war between two magnetic lobes beneath Canada and Siberia, ending with the imbalance causing the shift.",
+    "hook_text": "WHY THE POLE IS MOVING FAST",
+    "titles": [
+      "The Tug\u2011of\u2011War Inside Earth",
+      "What Drives the Magnetic Pole's Speed?",
+      "Two Lobes Pulling the Pole Apart"
+    ],
+    "caption": "Deep Earth battles shape our compass \ud83e\udded",
+    "hashtags": [
+      "#Science",
+      "#Earth",
+      "#Magnetism",
+      "#Geology",
+      "#Shorts"
+    ],
+    "id": 6,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:10:40-00:11:20\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_6.%(ext)s\""
+  },
+  {
+    "start_s": 460.0,
+    "end_s": 500.0,
+    "start": "00:07:40",
+    "end": "00:08:20",
+    "duration_s": 40,
+    "viral_probability": 74.8,
+    "factors": {
+      "hook": 85.0,
+      "pacing": 77.0,
+      "trend": 62.0,
+      "loop": 73.0
+    },
+    "why": "The hook at 00:07:45 notes the sudden acceleration of the magnetic pole in 1990, followed by data on its speed increase to 55 km/year. The segment concludes with the pole now moving toward Siberia, a clear payoff.",
+    "hook_text": "POLE SPEED SKYROCKETED IN 1990",
+    "titles": [
+      "When the North Pole Started Racing",
+      "1990: The Year the Pole Accelerated",
+      "Why the Magnetic Pole Is Speeding Up"
+    ],
+    "caption": "The magnetic pole went from crawl to sprint! \ud83d\ude80",
+    "hashtags": [
+      "#Science",
+      "#Earth",
+      "#Magnetism",
+      "#History",
+      "#Shorts"
+    ],
+    "id": 7,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:07:40-00:08:20\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_7.%(ext)s\""
+  },
+  {
+    "start_s": 730.0,
+    "end_s": 775.0,
+    "start": "00:12:10",
+    "end": "00:12:55",
+    "duration_s": 45,
+    "viral_probability": 72.1,
+    "factors": {
+      "hook": 84.0,
+      "pacing": 75.0,
+      "trend": 55.0,
+      "loop": 72.0
+    },
+    "why": "Hook at 00:12:15 introduces magnetic flips, followed by stats that flips occur every ~430,000 years, ending with the note that the last major flip was 780,000 years ago.",
+    "hook_text": "EARTH'S MAGNETIC FIELD FLIPS PERIODICALLY",
+    "titles": [
+      "How Often Does Earth Flip Its Poles?",
+      "The Cycle of Magnetic Reversals",
+      "Why the Planet's Magnetism Changes"
+    ],
+    "caption": "Earth's magnetic mood swings are real! \ud83c\udf10",
+    "hashtags": [
+      "#Science",
+      "#Earth",
+      "#Magnetism",
+      "#Geology",
+      "#Shorts"
+    ],
+    "id": 8,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:12:10-00:12:55\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_8.%(ext)s\""
+  },
+  {
+    "start_s": 885.0,
+    "end_s": 920.0,
+    "start": "00:14:45",
+    "end": "00:15:20",
+    "duration_s": 35,
+    "viral_probability": 70.7,
+    "factors": {
+      "hook": 83.0,
+      "pacing": 74.0,
+      "trend": 53.0,
+      "loop": 70.0
+    },
+    "why": "Hook at 00:14:47 gives the frequency of magnetic flips, then cites the average interval of 430,000 years, ending with the implication for future flips.",
+    "hook_text": "MAGNETIC FLIPS EVERY 430K YEARS",
+    "titles": [
+      "The 430,000\u2011Year Magnetic Clock",
+      "When Will the Next Flip Happen?",
+      "Earth's Magnetic Flip Timeline"
+    ],
+    "caption": "Counting down to the next magnetic reversal \u23f3",
+    "hashtags": [
+      "#Science",
+      "#Earth",
+      "#Magnetism",
+      "#Future",
+      "#Shorts"
+    ],
+    "id": 9,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=QsHQxRlBy6Y\" --download-sections \"*00:14:45-00:15:20\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_9.%(ext)s\""
+  }
+]

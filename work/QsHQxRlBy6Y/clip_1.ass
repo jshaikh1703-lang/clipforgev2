@@ -1,0 +1,53 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Impact,64,&H0000E6FF&,&H00FFFFFF&,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,5,3,2,70,70,345,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.87,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf9}AN {\kf39}INVISIBLE {\kf39}POINT
+Dialogue: 0,0:00:00.87,0:00:02.05,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf39}IS {\kf39}SLIPPING {\kf39}UNDER
+Dialogue: 0,0:00:02.05,0:00:03.11,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf39}THE {\kf39}ICE, {\kf27}WHAT
+Dialogue: 0,0:00:03.11,0:00:03.93,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf27}DIFFERENCE {\kf27}DOES {\kf27}IT
+Dialogue: 0,0:00:03.93,0:00:04.74,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf27}MAKE {\kf27}TO {\1c&H0000E6FF&}{\kf27}US?
+Dialogue: 0,0:00:04.74,0:00:05.60,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}IN {\kf29}REALITY, {\kf29}IT
+Dialogue: 0,0:00:05.60,0:00:06.45,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}MAKES {\kf29}A {\1c&H0000E6FF&}{\kf29}HUGE
+Dialogue: 0,0:00:06.45,0:00:07.52,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}DIFFERENCE. {\kf39}AND {\kf39}THE
+Dialogue: 0,0:00:07.52,0:00:08.68,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf39}MOST {\kf39}VISIBLE {\kf39}EXAMPLE
+Dialogue: 0,0:00:08.68,0:00:09.70,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf39}IS {\kf39}AIRPORTS. {\kf24}THE
+Dialogue: 0,0:00:09.70,0:00:10.43,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}NAMES {\kf24}OF {\kf24}THE
+Dialogue: 0,0:00:10.43,0:00:11.15,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}RUNWAYS {\kf24}IN {\kf24}AIRPORTS
+Dialogue: 0,0:00:11.15,0:00:11.88,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf24}AROUND {\kf24}THE {\kf24}WORLD
+Dialogue: 0,0:00:11.88,0:00:12.98,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf37}ARE {\kf37}DESIGNATED {\kf37}WITH
+Dialogue: 0,0:00:12.98,0:00:14.86,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf37}NUMBERS. {\kf76}18, {\kf76}27,
+Dialogue: 0,0:00:14.86,0:00:16.29,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf76}36. {\kf34}THESE {\kf34}NUMBERS
+Dialogue: 0,0:00:16.29,0:00:17.30,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf34}ARE {\kf34}NOT {\kf34}RANDOM.
+Dialogue: 0,0:00:17.30,0:00:18.05,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf25}THEY {\kf25}COME {\kf25}FROM
+Dialogue: 0,0:00:18.05,0:00:18.79,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf25}THE {\kf25}COMPASS {\kf25}HEADING
+Dialogue: 0,0:00:18.79,0:00:19.54,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf25}OF {\kf25}THE {\kf25}RUNWAY.
+Dialogue: 0,0:00:19.54,0:00:20.63,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}FOR {\kf36}EXAMPLE, {\kf36}18
+Dialogue: 0,0:00:20.63,0:00:21.72,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}MEANS {\kf36}IT {\kf36}IS
+Dialogue: 0,0:00:21.72,0:00:22.81,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}POINTING {\kf36}180 {\kf36}DEGREES
+Dialogue: 0,0:00:22.81,0:00:23.90,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}ACCORDING {\kf36}TO {\kf36}THE
+Dialogue: 0,0:00:23.90,0:00:25.03,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf36}COMPASS. {\kf35}IF {\kf35}THE
+Dialogue: 0,0:00:25.03,0:00:26.09,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf35}MAGNETIC {\kf35}NORTH {\kf35}SHIFTS,
+Dialogue: 0,0:00:26.09,0:00:27.15,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf35}THE {\kf35}REAL {\kf35}COMPASS
+Dialogue: 0,0:00:27.15,0:00:28.06,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf35}HEADING {\kf28}OF {\kf28}THE
+Dialogue: 0,0:00:28.06,0:00:28.89,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf28}RUNWAY {\kf28}AND {\kf28}ITS
+Dialogue: 0,0:00:28.89,0:00:29.72,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf28}NUMBER {\kf28}WILL {\kf28}BE
+Dialogue: 0,0:00:29.72,0:00:30.58,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf28}DIFFERENT. {\kf29}FOR {\kf29}EXAMPLE,
+Dialogue: 0,0:00:30.58,0:00:31.46,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}IF {\kf29}A {\kf29}PLANE
+Dialogue: 0,0:00:31.46,0:00:32.33,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}WANTS {\kf29}TO {\kf29}LAND
+Dialogue: 0,0:00:32.33,0:00:33.21,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}ON {\kf29}RUNWAY {\kf29}18,
+Dialogue: 0,0:00:33.21,0:00:34.08,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}IT {\kf29}MEANS {\kf29}THAT
+Dialogue: 0,0:00:34.08,0:00:34.96,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}THE {\kf29}PLANE {\kf29}HAS
+Dialogue: 0,0:00:34.96,0:00:35.83,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}TO {\kf29}COME {\kf29}ON
+Dialogue: 0,0:00:35.83,0:00:36.71,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}A {\kf29}180 {\kf29}DEGREE
+Dialogue: 0,0:00:36.71,0:00:37.70,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf29}HEADING. {\kf35}BUT {\kf35}IF
+Dialogue: 0,0:00:37.70,0:00:38.75,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf35}THE {\kf35}MAGNETIC {\kf35}NORTH
+Dialogue: 0,0:00:38.75,0:00:39.80,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf35}POLE {\kf35}DIRECTION {\kf35}HAS
+Dialogue: 0,0:00:39.80,0:00:40.00,Default,,0,0,0,,{\t(0,120,\fscx116\fscy116)\t(120,240,\fscx100\fscy100)} {\kf20}CHANGED,

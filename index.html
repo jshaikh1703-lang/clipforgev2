@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClipForge: Local Stream Clipper</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);background:#09090b}
+body{background:#09090b;color:#e4e4e7;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:env(safe-area-inset-bottom,0px)}
+.mono{font-family:ui-monospace,Consolas,monospace}
+.glow{box-shadow:0 0 22px rgba(16,185,129,.4)}
+.pl{container-type:inline-size}
+@keyframes drift{to{transform:translateX(-50%)}}@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes bnc{0%{transform:translateY(.25em)}60%{transform:translateY(-.1em)}100%{transform:none}}
+@keyframes trk{0%{left:8%}100%{left:54%}}
+.pop{display:inline-block;animation:pop .22s ease-out}.bnc{display:inline-block;animation:bnc .25s ease-out}
+.road{background:repeating-linear-gradient(90deg,#fff3 0 18px,transparent 18px 46px);width:200%;animation:drift 1s linear infinite}
+.paused *{animation-play-state:paused!important}
+details>summary{list-style:none;cursor:pointer}details>summary::-webkit-details-marker{display:none}
+button:focus-visible,input:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head>
+<body class="min-h-screen">
+<header class="border-b border-zinc-800 bg-zinc-950/80 sticky top-0 z-20 backdrop-blur">
+ <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+  <div class="flex items-center gap-2 mr-auto"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-purple-500 grid place-items-center text-zinc-950 font-black">C</div>
+  <div><div class="font-bold leading-none">ClipForge</div><div class="text-xs text-zinc-500">Local engine, $0/month</div></div></div>
+  <div id="status" class="flex flex-wrap gap-2 text-xs"></div>
+ </div>
+</header>
+<main class="max-w-7xl mx-auto px-4 py-6 pb-32">
+<section class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+ <div class="flex flex-wrap items-center gap-3">
+  <h1 class="text-xl font-bold mr-auto">Turn a long stream into ready-to-post clips</h1>
+  <div id="plat" class="flex rounded-xl border border-zinc-700 p-1 text-sm"></div>
+ </div>
+ <div class="mt-4 flex flex-col sm:flex-row gap-2">
+  <input id="url" class="flex-1 mono text-sm rounded-xl bg-zinc-950 border border-zinc-700 px-4 py-3 outline-none focus:border-emerald-400" aria-label="Stream URL">
+  <input id="apiKey" type="password" placeholder="Gemini, Groq, OpenRouter keys (comma-separated) or TEST" class="mono text-sm rounded-xl bg-zinc-950 border border-zinc-700 px-4 py-3 outline-none focus:border-purple-400">
+  <button id="go" class="rounded-xl px-6 py-3 font-bold text-zinc-950 bg-emerald-400 hover:bg-emerald-300 glow transition active:scale-95 disabled:opacity-40 disabled:shadow-none">Fetch &amp; Analyze</button>
+ </div>
+ <div class="mt-3 grid sm:grid-cols-[1fr_auto] gap-2">
+  <input id="referenceUrl" class="mono text-sm rounded-xl bg-zinc-950 border border-zinc-700 px-4 py-3 outline-none focus:border-purple-400" aria-label="Reference viral video URL" placeholder="Reference Viral Video URL (YouTube Shorts / Reels)">
+  <label class="flex items-center gap-2 rounded-xl bg-zinc-950 border border-zinc-700 px-4 py-3 text-sm text-zinc-300">
+   Dynamic Auto-Zoom
+   <select id="zoomMode" class="rounded-lg bg-zinc-900 border border-zinc-700 px-2 py-1">
+    <option value="off">Off</option><option value="subtle">Subtle 1.12x</option><option value="punchy">Punchy 1.22x</option>
+   </select>
+  </label>
+ </div>
+ <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+  <label for="clipCount" class="text-zinc-400">Clips to Generate (1–10)</label>
+  <select id="clipCount" class="rounded-lg bg-zinc-950 border border-zinc-700 px-3 py-2">
+   <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+   <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+   <option value="9">9</option><option value="10" selected>10</option>
+  </select>
+ </div>
+ <div id="valid" class="text-xs mt-2 mono"></div>
+ <div class="mt-5 grid lg:grid-cols-3 gap-5 text-sm">
+  <div><div class="text-zinc-400 mb-2">Format and framing</div><div id="optFmt" class="grid gap-2"></div>
+   <label id="lbWrap" class="hidden mt-2 text-xs items-center gap-2"><input id="lb" type="checkbox" class="accent-purple-400"> Cinematic letterbox bars</label>
+   <label class="mt-2 text-xs flex items-center gap-2"><input id="autoFaceCam" type="checkbox" checked class="accent-purple-400"> Auto Face-Cam Split (FaceLayoutAgent)</label></div>
+  <div><div class="text-zinc-400 mb-2">Caption style</div><div id="optCap" class="grid grid-cols-2 gap-2"></div>
+   <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+    <span class="flex items-center gap-1">Size <span id="optSize" class="flex rounded-lg border border-zinc-700 overflow-hidden"></span></span>
+    <label class="flex items-center gap-1"><input id="up" type="checkbox" checked class="accent-purple-400"> ALL CAPS</label>
+    <label class="flex items-center gap-1"><input id="safe" type="checkbox" checked class="accent-purple-400"> Safe zone</label></div></div>
+  <div><div class="text-zinc-400 mb-2">Minimum Viral Probability: <b id="thrVal" class="text-emerald-400">55</b>%</div>
+   <input id="thr" type="range" min="0" max="97" value="55" class="w-full accent-emerald-400">
+   <div class="text-xs text-zinc-500 mt-2">Index = 30% hook + 25% pacing + 25% trend + 20% loop.</div>
+   <div class="mt-4 p-3 bg-zinc-950 rounded-xl border border-zinc-800">
+     <div class="text-xs text-zinc-400 mb-1">Trends / Focus topics</div>
+     <textarea id="trends" class="w-full bg-transparent border-none outline-none text-xs mono resize-none h-12" placeholder="GTA 6, Vice City, stunts..."></textarea>
+   </div>
+   <div class="mt-3 p-3 bg-zinc-950 rounded-xl border border-zinc-800">
+    <div class="flex items-center gap-2"><b class="text-xs text-zinc-300 mr-auto">Live Shorts / Reels / TikTok Trend Pulse</b>
+     <button id="trendGo" class="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1.5 rounded-lg font-bold">Scan trends</button></div>
+    <div id="trendPulse" class="mt-2 text-xs text-zinc-400">Search live short-form titles against your trends and clips.</div>
+   </div>
+  </div>
+ </div>
+ <div id="prog" class="hidden mt-6">
+  <div class="h-2 rounded-full bg-zinc-800 overflow-hidden"><div id="bar" class="h-full w-0 bg-gradient-to-r from-emerald-400 to-purple-500 transition-all duration-500"></div></div>
+  <ol id="steps" aria-live="polite" class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs"></ol>
+  <div class="mt-2 text-xs text-zinc-500 mono" id="ramLine"></div>
+ </div>
+</section>
+
+<section class="mt-6 rounded-2xl border border-purple-500/30 bg-purple-500/5 p-5">
+ <div class="flex items-start gap-3 mb-4"><div class="mr-auto"><h2 class="font-bold">Five-agent control room</h2>
+  <p class="text-xs text-zinc-400">Commands, live agent activity, and durable task history are stored in SQLite.</p></div>
+  <span id="dbStatus" class="text-xs text-emerald-300">SQLite connecting…</span></div>
+ <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+  <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+   <b>MoCap</b><p class="text-xs text-zinc-500 mt-1">Motion and chat spike sensitivity</p>
+   <div class="flex gap-2 mt-2"><input data-agent-command="MoCap" class="min-w-0 flex-1 text-xs bg-zinc-900 border border-zinc-700 rounded px-2 py-2" placeholder="sensitivity high">
+    <button data-agent-submit="MoCap" class="bg-purple-500 text-xs px-3 rounded">Send</button></div>
+   <div data-agent-status="MoCap" class="text-xs text-zinc-500 mt-2">Idle</div>
+  </div>
+  <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+   <b>ShoCap</b><p class="text-xs text-zinc-500 mt-1">Review clip previews</p>
+   <div class="flex gap-2 mt-2"><input data-agent-command="ShoCap" class="min-w-0 flex-1 text-xs bg-zinc-900 border border-zinc-700 rounded px-2 py-2" placeholder="approve 2 [notes]">
+    <button data-agent-submit="ShoCap" class="bg-purple-500 text-xs px-3 rounded">Send</button></div>
+   <div data-agent-status="ShoCap" class="text-xs text-zinc-500 mt-2">Idle</div>
+  </div>
+  <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+   <b>Editor</b><p class="text-xs text-zinc-500 mt-1">Recut, style, or zoom instructions</p>
+   <div class="flex gap-2 mt-2"><input data-agent-command="Editor" class="min-w-0 flex-1 text-xs bg-zinc-900 border border-zinc-700 rounded px-2 py-2" placeholder="Set subtle zoom and rerender clip 1">
+    <button data-agent-submit="Editor" class="bg-purple-500 text-xs px-3 rounded">Send</button></div>
+   <div data-agent-status="Editor" class="text-xs text-zinc-500 mt-2">Idle</div>
+  </div>
+  <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+   <b>Upscaler</b><p class="text-xs text-zinc-500 mt-1">Render selected clips at 4K</p>
+   <div class="flex gap-2 mt-2"><input data-agent-command="Upscaler" class="min-w-0 flex-1 text-xs bg-zinc-900 border border-zinc-700 rounded px-2 py-2" placeholder="upscale approved / upscale all">
+    <button data-agent-submit="Upscaler" class="bg-purple-500 text-xs px-3 rounded">Send</button></div>
+   <div data-agent-status="Upscaler" class="text-xs text-zinc-500 mt-2">Idle</div>
+  </div>
+  <div class="rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+   <b>Supervisor</b><p class="text-xs text-zinc-500 mt-1">Inspect status or retry a failed task</p>
+   <div class="flex gap-2 mt-2"><input data-agent-command="Supervisor" class="min-w-0 flex-1 text-xs bg-zinc-900 border border-zinc-700 rounded px-2 py-2" placeholder="retry TASK_ID">
+    <button data-agent-submit="Supervisor" class="bg-purple-500 text-xs px-3 rounded">Send</button></div>
+   <div data-agent-status="Supervisor" class="text-xs text-zinc-500 mt-2">Idle</div>
+  </div>
+ </div>
+ <div class="mt-4 rounded-xl border border-zinc-800 bg-zinc-950 p-3">
+  <div class="font-semibold text-sm mb-2">Persistent tasks</div><div id="taskDashboard" class="grid gap-2 text-xs text-zinc-400">Loading…</div>
+ </div>
+</section>
+
+<section id="aiTools" class="mt-8 grid md:grid-cols-2 gap-6 hidden">
+  <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+    <h3 class="font-bold mb-2 flex items-center gap-2"><span class="pop">🧬</span> Reference Style Cloner</h3>
+    <p class="text-xs text-zinc-400 mb-3">Paste a viral video URL to clone its "DNA" (pacing, colors, captioning).</p>
+    <div class="grid gap-2">
+      <input id="refFile" type="file" accept="image/*,video/*" class="text-xs text-zinc-400">
+      <div class="flex gap-2">
+      <input id="refUrl" class="flex-1 text-xs bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2" placeholder="TikTok or Reel URL">
+      <button id="refGo" class="bg-emerald-500 text-zinc-950 text-xs px-3 py-2 rounded-lg font-bold">Clone</button>
+      </div>
+    </div>
+    <div id="styleList" class="mt-3 flex flex-wrap gap-2 text-xs"></div>
+  </div>
+</section>
+
+<section class="mt-8">
+ <div class="flex flex-wrap items-center gap-3 mb-3">
+  <h2 class="text-lg font-bold mr-auto">Clips</h2><span id="count" class="text-xs text-zinc-500"></span>
+  <button id="renderBatch" disabled class="rounded-xl px-4 py-2 text-sm font-bold bg-purple-500 text-white disabled:opacity-40">Render Top 10 Batch</button>
+ </div>
+ <div id="batchProgress" class="hidden mb-4 rounded-xl border border-purple-500/30 bg-purple-500/5 p-3 text-sm"></div>
+ <div id="grid" class="grid gap-6"></div>
+</section>
+</main>
+
+<aside id="drawer" data-o="0" class="fixed inset-x-0 bottom-0 z-30 bg-zinc-950 border-t border-purple-500/40 transition-transform duration-300 translate-y-[calc(100%-48px)]" style="padding-bottom:env(safe-area-inset-bottom,0px)">
+ <button id="dToggle" class="w-full h-12 px-4 flex items-center justify-between text-sm font-semibold"><span>Pipeline spec and backend logs <span id="dClip" class="text-purple-400 font-normal"></span></span><span id="dArrow">Open</span></button>
+ <div class="px-4 pb-4 max-w-7xl mx-auto"><div class="flex flex-wrap gap-2 mb-3" id="dTabs"></div>
+ <pre id="code" class="mono text-xs leading-relaxed bg-zinc-900 border border-zinc-800 rounded-xl p-4 overflow-auto max-h-[38vh] text-emerald-200"></pre></div>
+</aside>
+
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-20 z-50 hidden rounded-full bg-emerald-400 text-zinc-950 text-sm font-semibold px-4 py-2"></div>
+
+<div id="modal" class="fixed inset-0 z-50 hidden bg-black/70 p-4 place-items-center">
+ <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-2xl p-4">
+  <div class="flex justify-between mb-2"><b id="mTitle">Render &amp; Export</b><button id="mClose" class="text-zinc-400">Close</button></div>
+  <div id="renderStatus" class="hidden mb-4">
+    <div class="flex justify-between text-xs mb-1"><span id="renderStep">Queued...</span><span id="renderPerc">0%</span></div>
+    <div class="h-1.5 rounded bg-zinc-800 overflow-hidden"><div id="mBar" class="h-full w-0 bg-emerald-400 transition-all duration-300"></div></div>
+  </div>
+  <div id="renderResult" class="hidden">
+    <video id="preview" controls class="w-full rounded-xl bg-black aspect-video mb-4"></video>
+    <div class="flex gap-2">
+      <a id="downloadBtn" download class="flex-1 bg-emerald-400 text-zinc-950 text-center py-2 rounded-lg font-bold">Download MP4</a>
+      <button id="mCopy" class="px-4 py-2 border border-zinc-600 rounded-lg text-sm">Copy Metadata</button>
+    </div>
+  </div>
+  <div id="renderOptions" class="grid gap-3">
+    <p class="text-sm text-zinc-400">Finalize your clip with the current settings.</p>
+    <button id="startRender" class="w-full bg-purple-500 text-white font-bold py-3 rounded-xl hover:bg-purple-400 transition">Start 4K Render</button>
+  </div>
+ </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const FAC=[["Retention hook",30],["Pacing and emotion",25],["Trend alignment",25],["Loop and re-watch",20]];
+const FMT=[["stacked","9:16","A. Stacked: facecam 35% / gameplay 65%"],["fill","9:16","B. Full-bleed"],["blur","9:16","C. Centered over blurred background"],["h","16:9","16:9 horizontal"]];
+let CAPS=[["hormozi_pop","Hormozi Pop"],["mrbeast_impact","MrBeast Impact"],["clean_podcast","Clean Podcast"],["cyberpunk_neon","Cyberpunk Neon"]];
+const S={plat:"yt",fmt:"stacked",cap:"hormozi_pop",size:1,up:true,safe:true,lb:false,autoFaceCam:true,thr:55,done:false,ingestError:"",sel:1,tab:0,busy:false,clips:[],video_id:null,targetCount:10,styles:{},zoom:"off",referenceBlueprint:null,categoryFilters:[]};
+let ingestProgressTimer=null;
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.remove("hidden");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hidden"),1800)};
+const stamp=seconds=>{const whole=Math.max(0,Math.floor(seconds)),h=Math.floor(whole/3600),m=Math.floor(whole%3600/60),s=whole%60;return`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`};
+const parseStamp=value=>{const parts=String(value||"").split(":").map(Number);return parts.length===3&&parts.every(Number.isFinite)?parts[0]*3600+parts[1]*60+parts[2]:null};
+function normalizeClip(clip,index){
+ if(!clip||typeof clip!=="object"||Array.isArray(clip))return null;
+ const startValue=clip.start_s==null?parseStamp(clip.start):Number(clip.start_s);
+ const start=Number.isFinite(startValue)?Math.max(0,startValue):0;
+ const endValue=clip.end_s==null?parseStamp(clip.end):Number(clip.end_s);
+ const end=Number.isFinite(endValue)&&endValue>start?endValue:start+30;
+ const score=Number(clip.viral_probability);
+ return {...clip,id:Number.isInteger(Number(clip.id))&&Number(clip.id)>0?Number(clip.id):index+1,
+  start_s:start,end_s:end,start:clip.start||stamp(start),end:clip.end||stamp(end),
+  duration_s:Number.isFinite(Number(clip.duration_s))&&Number(clip.duration_s)>0?Number(clip.duration_s):Math.round(end-start),
+  viral_probability:Number.isFinite(score)?score:0,
+  moment_category:typeof clip.moment_category==="string"&&clip.moment_category?clip.moment_category:"High-Tension Hook",
+  hook_text:typeof clip.hook_text==="string"?clip.hook_text:"",
+  hook_line:typeof clip.hook_line==="string"&&clip.hook_line?clip.hook_line:(clip.hook_text||""),
+  moment_reason:typeof clip.moment_reason==="string"&&clip.moment_reason?clip.moment_reason:(clip.why||"Moment analysis unavailable."),
+  why:typeof clip.why==="string"?clip.why:(clip.moment_reason||"")};
+}
+
+function detect(u){
+ if(/^https?:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|live\/)[\w-]{6,}|youtu\.be\/[\w-]{6,})/.test(u))return{p:"yt",k:"YouTube live/VOD"};
+ if(/^https?:\/\/(www\.)?twitch\.tv\/videos\/\d+/.test(u))return{p:"tw",k:"Twitch VOD"};
+ if(/^https?:\/\/(www\.)?twitch\.tv\/\w+\/clip\/[\w-]+|^https?:\/\/clips\.twitch\.tv\/[\w-]+/.test(u))return{p:"tw",k:"Twitch clip"};
+ return null;}
+
+function validate(){
+ const u=$("#url").value.trim();const d=detect(u);
+ if(d&&d.p!==S.plat){S.plat=d.p;plat();}
+ $("#valid").innerHTML=d?`<span class="text-emerald-400">Valid: ${d.k}</span>`:`<span class="text-amber-400">Paste a YouTube or Twitch link.</span>`;
+ $("#go").disabled=!d||S.busy;}
+
+function plat(){
+ $("#plat").innerHTML=[["yt","YouTube"],["tw","Twitch"]].map(([v,l])=>`<button data-v="${v}" class="px-4 py-1.5 rounded-lg ${S.plat===v?"bg-purple-500/30 text-white":"text-zinc-400"}">${l}</button>`).join("");
+ $("#plat").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.plat=b.dataset.v;validate();plat();});}
+
+function status(){
+ $("#status").innerHTML=[["API","Online"],["FFmpeg","Ready"]].map(([a,b])=>`<span class="flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1"><i class="w-2 h-2 rounded-full bg-emerald-400"></i>${a} <b class="text-emerald-400 font-medium">${b}</b></span>`).join("");}
+
+function pick(el,list,key,fn){
+ $(el).innerHTML=list.map(([v,a,b])=>`<button data-v="${v}" class="text-left rounded-xl border px-3 py-2 text-sm transition ${String(S[key])===String(v)?"border-purple-400 bg-purple-500/15 text-white":"border-zinc-700 text-zinc-400 hover:border-zinc-500"}">${b?`<b class="mr-1 text-emerald-300">${a}</b>${b}`:a}</button>`).join("");
+ $(el).querySelectorAll("button").forEach(b=>b.onclick=()=>{S[key]=b.dataset.v;fn();});}
+
+function opts(){
+ pick("#optFmt",FMT,"fmt",opts2);pick("#optCap",CAPS,"cap",opts2);
+ $("#optSize").innerHTML=["S","M","L"].map((l,i)=>`<button data-i="${i}" class="px-2 py-1 ${S.size===i?"bg-purple-500/40":""}">${l}</button>`).join("");
+ $("#optSize").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.size=+b.dataset.i;opts2();});
+ $("#lbWrap").classList.toggle("hidden",S.fmt!=="h");}
+function opts2(){opts();grid();}
+
+function renderChunkProgress(completed,active){
+ $("#steps").innerHTML=Array.from({length:5},(_,index)=>{
+  const done=index<completed,current=index+1===active;
+  const state=done?"Done":current?"Now":"Queued";
+  const color=done?"border-emerald-500/40 text-emerald-300":
+   current?"border-purple-400 text-purple-200":"border-zinc-700 text-zinc-500";
+  return `<li class="rounded-lg border ${color} px-2 py-1.5 flex justify-between gap-1"><span>${(index)*20}-${(index+1)*20}%</span><b>${state}</b></li>`;
+ }).join("");
+}
+
+async function pollIngestProgress(){
+ try {
+  const res=await fetch("/api/ingest/progress");
+  if(!res.ok)throw new Error(`Progress request failed: ${res.status}`);
+  const progress=await res.json();
+  const chunk=String(progress.message||"").match(/^(Processing|Analyzed) video segment (\d+)-(\d+)%/);
+  if(chunk){
+   const completed=Number(chunk[2])/20+(chunk[1]==="Analyzed"?1:0);
+   const active=chunk[1]==="Processing"?Number(chunk[3])/20:0;
+   renderChunkProgress(completed,active);
+  }else if(progress.message)$("#steps").innerHTML=`<li>${esc(progress.message)}</li>`;
+  const percent=Number(progress.percent);
+  if(Number.isFinite(percent)){
+   const bounded=Math.max(0,Math.min(100,percent));
+   $("#bar").style.width=`${bounded}%`;
+   $("#ramLine").textContent=`${progress.message||"Ingesting"} · ${Math.round(bounded)}%`;
+  }
+ } catch(error) {
+  console.warn("Could not update ingest progress:",error);
+ }
+}
+
+async function run(){
+ if(S.busy)return;
+ S.busy=true;S.done=false;S.ingestError="";S.categoryFilters=[];grid();
+ $("#go").disabled=true;$("#go").textContent="Analyzing...";
+ $("#prog").classList.remove("hidden");
+ $("#bar").style.width="0%";
+ $("#steps").innerHTML="<li>Initializing pipeline...</li>";
+ $("#ramLine").textContent="Waiting for download progress...";
+ clearInterval(ingestProgressTimer);
+ ingestProgressTimer=setInterval(pollIngestProgress,1000);
+ pollIngestProgress();
+ 
+ try {
+  S.referenceBlueprint=null;
+  const referenceUrl=$("#referenceUrl").value.trim();
+  if(referenceUrl){
+   $("#steps").innerHTML="<li>Reverse-engineering reference captions and metadata...</li>";
+   const referenceResponse=await fetch("/api/reverse-engineer",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:referenceUrl})});
+   if(!referenceResponse.ok)throw new Error(await referenceResponse.text());
+   S.referenceBlueprint=(await referenceResponse.json()).blueprint;
+  }
+  const res = await fetch("/api/ingest", {
+   method: "POST",
+   headers: {"Content-Type": "application/json"},
+   body: JSON.stringify({
+     url: $("#url").value.trim(),
+     min_score: S.thr,
+     trends: $("#trends").value,
+     api_key: $("#apiKey").value,
+     target_count: S.targetCount,
+     reference_blueprint:S.referenceBlueprint
+   })
+  });
+  if(!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  S.clips = (Array.isArray(data.clips)?data.clips:[]).map(normalizeClip).filter(Boolean);
+  S.video_id = data.video_id;
+  S.done = true;
+  $("#aiTools").classList.remove("hidden");
+ } catch(e) {
+  S.ingestError=e.message||"Ingest failed.";
+  toast("Error: " + e.message);
+ } finally {
+  S.busy = false;
+  clearInterval(ingestProgressTimer);
+  ingestProgressTimer=null;
+  $("#go").disabled = false;
+  $("#go").textContent = "Fetch & Analyze";
+  $("#prog").classList.add("hidden");
+  grid();
+ }
+}
+
+function grid(){
+ const g=$("#grid"),clips=Array.isArray(S.clips)?S.clips.filter(c=>c&&typeof c==="object"):[];
+ const list=clips.filter(c=>Number(c.viral_probability)>=S.thr&&
+  (!S.categoryFilters.length||S.categoryFilters.includes(c.moment_category)));
+ $("#count").textContent=S.done?`${list.length} clips found`:"";
+ $("#renderBatch").disabled=!S.done||!list.length||S.busy;
+ if(!S.done||!list.length){
+  const message=S.ingestError?`Ingest failed: ${esc(S.ingestError)}`:
+   !S.done?"Paste a link and press Fetch & Analyze.":
+   clips.length?`No clips match the ${S.thr}% threshold.`:"Ingest completed, but no scored clips were returned.";
+  g.innerHTML=`<div class="col-span-full rounded-2xl border border-dashed border-zinc-700 p-10 text-center text-zinc-400">${message}</div>`;
+  return;
+ }
+ g.innerHTML=list.map(c=>`
+ <article class="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 flex flex-col gap-4">
+  ${c.preview_url?`<video controls preload="metadata" src="${esc(c.preview_url)}" class="w-full aspect-video bg-black rounded-lg"></video>`:`<div class="aspect-video bg-black rounded-lg grid place-items-center text-zinc-500 mono text-xs">Preview unavailable</div>`}
+  <div class="flex items-center gap-3">
+    <div class="flex-1"><div class="text-2xl font-extrabold text-emerald-300">${c.viral_probability}%</div><div class="text-xs text-zinc-400">Viral Probability</div>
+    <div class="mono text-[11px] mt-1 text-zinc-300">${c.start} - ${c.end} (${c.duration_s}s)</div></div>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+   <span class="rounded-full bg-purple-500/20 text-purple-200 px-3 py-1 text-xs font-bold">${esc(c.moment_category||"High-Tension Hook")}</span>
+   <span class="text-xs text-zinc-300">${esc(c.hook_line||c.hook_text||"")}</span>
+  </div>
+  <div class="text-xs text-zinc-400">${esc(c.moment_reason||c.why||"")}</div>
+  <div class="text-xs text-zinc-300">${esc(c.why)}</div>
+  <div class="text-xs text-zinc-500">ShoCap review: ${esc(c.review?.status||"pending")}</div>
+  <button data-exp="${c.id}" class="w-full rounded-xl bg-emerald-400 text-zinc-950 font-bold py-2 hover:bg-emerald-300 transition">Render &amp; Export</button>
+ </article>`).join("");
+ g.querySelectorAll("[data-exp]").forEach(b=>b.onclick=()=>showExport(+b.dataset.exp));
+}
+
+let activeClip = null;
+function showExport(id){
+ activeClip = S.clips.find(c=>c.id===id);
+ $("#mTitle").textContent = "Render Clip " + id;
+ $("#modal").classList.remove("hidden");
+ $("#modal").classList.add("grid");
+ $("#renderStatus").classList.add("hidden");
+ $("#renderResult").classList.add("hidden");
+ $("#renderOptions").classList.remove("hidden");
+}
+
+function renderSpec(c){
+ return {
+  clip_id:c.id,video_id:S.video_id,url:$("#url").value.trim(),start:c.start,end:c.end,
+  start_s:c.start_s,end_s:c.end_s,duration_s:c.duration_s,framing:S.fmt,
+  caption_style:S.cap,all_caps:S.up,safe_zone:S.safe,letterbox:S.lb,font_size:S.size,
+  dynamic_zoom:S.zoom,reference_blueprint:c.reference_blueprint||S.referenceBlueprint,
+  auto_facecam:S.autoFaceCam
+ };
+}
+
+async function submitRenderBatch(clips){
+ const payload={clips:clips.map(renderSpec),count:clips.length};
+ const response=await fetch("/api/render-batch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+ if(!response.ok)throw new Error(await response.text());
+ const {job_id}=await response.json();
+ let job;
+ do{
+  await new Promise(resolve=>setTimeout(resolve,900));
+  const status=await fetch(`/api/render-batch/${encodeURIComponent(job_id)}`);
+  if(!status.ok)throw new Error(await status.text());
+  job=await status.json();
+  const percent=job.total?Math.round(job.completed*100/job.total):0;
+  $("#mBar").style.width=percent+"%";$("#renderPerc").textContent=percent+"%";
+  $("#renderStep").textContent=job.message||job.step||job.status;
+  $("#batchProgress").textContent=job.message||job.step||job.status;
+  $("#batchProgress").classList.remove("hidden");
+ }while(job.status==="queued"||job.status==="running");
+ if(job.status!=="completed")throw new Error(job.error||"Batch render failed.");
+ return job.results;
+}
+
+$("#startRender").onclick = async () => {
+ $("#renderOptions").classList.add("hidden");
+ $("#renderStatus").classList.remove("hidden");
+ $("#mBar").style.width = "0%";
+ $("#renderStep").textContent="Queued...";
+ 
+ try {
+  const results=await submitRenderBatch([activeClip]);
+  const data=results[0];
+  $("#renderStatus").classList.add("hidden");
+  $("#renderResult").classList.remove("hidden");
+  $("#preview").src = data.output;
+  $("#downloadBtn").href = data.output;
+  if(data.face_detected===false)toast("No face detected; rendered full-bleed.");
+  $("#mCopy").onclick = () => copy(JSON.stringify(activeClip, null, 2));
+ } catch(e) {
+  toast("Render failed: " + e.message);
+  $("#renderOptions").classList.remove("hidden");
+  $("#renderStatus").classList.add("hidden");
+ }
+};
+
+$("#renderBatch").onclick=async()=>{
+ const clips=S.clips.filter(c=>c.viral_probability>=S.thr).slice(0,10);
+ if(!clips.length)return;
+ $("#renderBatch").disabled=true;
+ $("#batchProgress").classList.remove("hidden");
+ $("#batchProgress").textContent="Submitting render batch...";
+ try{
+  const results=await submitRenderBatch(clips);
+  $("#batchProgress").textContent=`Completed ${results.length} renders: `+results.map(r=>`Clip ${r.clip_id} ${r.output}`).join(" · ");
+  toast(`Rendered ${results.length} clips`);
+ }catch(e){$("#batchProgress").textContent="Batch failed: "+e.message;toast("Batch failed: "+e.message)}
+ finally{$("#renderBatch").disabled=false}
+};
+
+function applyEditorActions(actions){
+ S.categoryFilters=actions.filters||[];
+ if(actions.zoom){S.zoom=actions.zoom;$("#zoomMode").value=actions.zoom}
+ if(actions.caption_style&&CAPS.some(([key])=>key===actions.caption_style)){S.cap=actions.caption_style;opts()}
+ if(typeof actions.auto_facecam==="boolean"){
+  S.autoFaceCam=actions.auto_facecam;$("#autoFaceCam").checked=S.autoFaceCam;
+  if(S.autoFaceCam){S.fmt="stacked";opts()}
+ }
+ const changed=[];
+ for(const update of actions.updates||[]){
+  const clip=S.clips.find(item=>item.id===update.clip_id);if(!clip)continue;
+  const start=Math.max(0,clip.start_s+update.start_delta_s);
+  let end=Math.max(start+25,clip.end_s+update.end_delta_s);
+  if(end-start>55)end=start+55;
+  clip.start_s=start;clip.end_s=end;clip.duration_s=Math.round(end-start);
+  clip.start=stamp(start);clip.end=stamp(end);changed.push(clip);
+ }
+ grid();
+ return changed;
+}
+
+async function sendAgentCommand(agent,button){
+ const input=document.querySelector(`[data-agent-command="${agent}"]`);
+ const status=document.querySelector(`[data-agent-status="${agent}"]`);
+ const command=input.value.trim();if(!command)return;
+ button.disabled=true;status.textContent="Working…";
+ try{
+  const approved=S.clips.filter(c=>c.review?.status==="approved");
+  const clipMatch=command.match(/\bclip\s*#?(\d+)\b/i);
+  const selected=agent!=="Upscaler"?S.clips:
+   /\bapproved\b/i.test(command)?approved:
+   clipMatch?S.clips.filter(c=>c.id===Number(clipMatch[1])):S.clips;
+  const renderRequests=agent==="Upscaler"?selected.slice(0,10).map(renderSpec):[];
+  const response=await fetch(`/api/agents/${encodeURIComponent(agent)}/command`,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({command,video_id:S.video_id,clips:S.clips,render_requests:renderRequests,api_key:$("#apiKey").value})
+  });
+  if(!response.ok)throw new Error(await response.text());
+  const result=await response.json();
+  if(agent==="Editor"){
+   const changed=applyEditorActions(result);
+   if(result.rerender)await submitRenderBatch((changed.length?changed:S.clips).slice(0,10));
+  }else if(agent==="ShoCap"){
+   const clip=S.clips.find(c=>c.id===result.clip_id);
+   if(clip)clip.review={status:result.status,notes:""};
+   grid();
+  }
+  status.textContent=result.task_id?`Queued task ${result.task_id}`:
+   result.status?`Clip ${result.clip_id}: ${result.status}`:"Command applied.";
+  input.value="";
+  await refreshDashboard();
+ }catch(error){status.textContent="Failed: "+error.message}
+ finally{button.disabled=false}
+}
+
+async function refreshDashboard(){
+ try{
+  const response=await fetch("/api/dashboard");if(!response.ok)throw new Error("Dashboard unavailable");
+  const data=await response.json();$("#dbStatus").textContent="SQLite connected";
+  for(const agent of ["MoCap","ShoCap","Editor","Upscaler","Supervisor"]){
+   const event=(data.events||[]).find(item=>item.agent===agent);
+   const el=document.querySelector(`[data-agent-status="${agent}"]`);
+   if(event&&el)el.textContent=`${event.status}: ${event.message}`;
+  }
+  const tasks=data.tasks||[];
+  $("#taskDashboard").innerHTML=tasks.length?tasks.map(task=>`
+   <div class="flex flex-wrap items-center gap-2 rounded-lg border border-zinc-800 px-2 py-2">
+    <b>${esc(task.kind)}</b><span>${esc(task.status)}</span><span>${Math.round(task.progress||0)}%</span>
+    <span class="flex-1">${esc(task.message||task.stage||"")}</span>
+    <span class="mono text-[10px]">${esc(task.id)}</span>
+    ${task.error?`<span class="text-red-300">${esc(task.error)}</span>`:""}
+    ${["render_batch","ingest"].includes(task.kind)&&["failed","interrupted"].includes(task.status)?`<button data-retry="${esc(task.id)}" class="rounded bg-purple-500 px-2 py-1 text-white">Retry</button>`:""}
+   </div>`).join(""):"No saved tasks yet.";
+  document.querySelectorAll("[data-retry]").forEach(button=>button.onclick=async()=>{
+   button.disabled=true;
+   try{
+    const retry=await fetch(`/api/tasks/${encodeURIComponent(button.dataset.retry)}/retry`,{
+     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({api_key:$("#apiKey").value})
+    });
+    if(!retry.ok)throw new Error(await retry.text());
+    await refreshDashboard();
+   }catch(error){toast("Retry failed: "+error.message)}
+  });
+ }catch(error){$("#dbStatus").textContent="SQLite unavailable";console.error(error)}
+}
+
+document.querySelectorAll("[data-agent-submit]").forEach(button=>{
+ button.onclick=()=>sendAgentCommand(button.dataset.agentSubmit,button);
+});
+document.querySelectorAll("[data-agent-command]").forEach(input=>{
+ input.onkeydown=event=>{
+  if(event.key==="Enter"){
+   event.preventDefault();
+   document.querySelector(`[data-agent-submit="${input.dataset.agentCommand}"]`).click();
+  }
+ };
+});
+
+$("#trendGo").onclick=async()=>{
+ $("#trendGo").disabled=true;$("#trendPulse").textContent="Searching live short-form titles...";
+ try{
+  const response=await fetch("/api/trend-pulse",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({trends:$("#trends").value,clips:S.clips})});
+  if(!response.ok)throw new Error(await response.text());
+  const data=await response.json();
+  const titles=(data.trending_titles||[]).map(title=>`<li>${esc(title)}</li>`).join("");
+  const results=(data.clips||[]).map(item=>`<div class="mt-2 border-t border-zinc-800 pt-2">
+   <b>Clip ${esc(item.clip_id)}</b> · Shorts ${esc(item.platform_fit.youtube_shorts)}% · Reels ${esc(item.platform_fit.instagram_reels)}% · TikTok ${esc(item.platform_fit.tiktok)}%
+   <div class="text-zinc-200">${esc(item.optimized_title)}</div><div>${(item.hashtags||[]).map(esc).join(" ")}</div>
+   <div class="text-zinc-500">${esc(item.loop_ending_suggestion)}</div></div>`).join("");
+  $("#trendPulse").innerHTML=`<div class="font-semibold text-zinc-300">Live title samples</div><ul class="list-disc ml-4">${titles||"<li>No results returned</li>"}</ul>${results}`;
+ }catch(error){$("#trendPulse").textContent="Trend search failed: "+error.message}
+ finally{$("#trendGo").disabled=false}
+};
+
+$("#refGo").onclick = async () => {
+  const file=$("#refFile").files[0],u=$("#refUrl").value.trim(); if(!file&&!u){toast("Choose a reference file or paste a URL");return}
+  const form=new FormData();if(file)form.append("file",file);if(u)form.append("url",u);
+  form.append("api_key",$("#apiKey").value);form.append("name",file?file.name.replace(/\.[^.]+$/,""):"");
+  try{
+   const res=await fetch("/api/analyze-reference",{method:"POST",body:form});
+   if(!res.ok)throw new Error(await res.text());
+   const d=await res.json();toast("Style saved: "+d.preset);await loadStyles();
+  }catch(e){toast("Reference clone failed: "+e.message)}
+};
+
+async function loadStyles(){
+ try{
+  const res=await fetch("/api/styles");if(!res.ok)throw new Error(await res.text());
+  const data=await res.json();S.styles=data.styles||{};
+  CAPS=Object.keys(S.styles).map(k=>[k,k.replace(/_/g," ").replace(/\b\w/g,x=>x.toUpperCase())]);
+  if(!CAPS.some(([key])=>key===S.cap))S.cap=CAPS[0]?.[0]||"hormozi_pop";
+  opts();
+  $("#styleList").innerHTML=CAPS.map(([key,label])=>`<span class="rounded-full border border-zinc-700 px-2 py-1">${esc(label)}</span>`).join("");
+ }catch(e){console.error("Could not load styles",e)}
+}
+
+$("#go").onclick=run;
+$("#url").oninput=validate;
+$("#thr").oninput=e=>{S.thr=+e.target.value;$("#thrVal").textContent=S.thr;grid()};
+$("#mClose").onclick=()=>{$("#modal").classList.add("hidden");$("#modal").classList.remove("grid")};
+$("#up").onchange=e=>S.up=e.target.checked;
+$("#safe").onchange=e=>S.safe=e.target.checked;
+$("#lb").onchange=e=>S.lb=e.target.checked;
+$("#autoFaceCam").onchange=e=>S.autoFaceCam=e.target.checked;
+$("#clipCount").onchange=e=>S.targetCount=+e.target.value;
+$("#zoomMode").onchange=e=>S.zoom=e.target.value;
+
+plat();opts();status();validate();loadStyles();refreshDashboard();setInterval(refreshDashboard,2000);
+</script></body></html>

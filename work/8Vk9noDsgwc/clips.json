@@ -1,0 +1,422 @@
+[
+  {
+    "start_s": 0.0,
+    "end_s": 35.0,
+    "start": "00:00:00",
+    "end": "00:00:35",
+    "duration_s": 35,
+    "viral_probability": 72.3,
+    "factors": {
+      "hook": 92.0,
+      "pacing": 80.0,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 00:00:00 (z=12.4); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=12.4) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 00:00:00"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 1,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*00:00:00-00:00:35\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_1.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 14612.0,
+    "end_s": 14647.0,
+    "start": "04:03:32",
+    "end": "04:04:07",
+    "duration_s": 35,
+    "viral_probability": 72.3,
+    "factors": {
+      "hook": 92.0,
+      "pacing": 80.0,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 04:03:37 (z=11.4); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=11.4) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 04:03:37"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 2,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*04:03:32-04:04:07\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_2.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 3497.0,
+    "end_s": 3532.0,
+    "start": "00:58:17",
+    "end": "00:58:52",
+    "duration_s": 35,
+    "viral_probability": 72.3,
+    "factors": {
+      "hook": 92.0,
+      "pacing": 80.0,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 00:58:22 (z=10.6); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=10.6) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 00:58:22"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 3,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*00:58:17-00:58:52\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_3.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 14986.0,
+    "end_s": 15021.0,
+    "start": "04:09:46",
+    "end": "04:10:21",
+    "duration_s": 35,
+    "viral_probability": 70.5,
+    "factors": {
+      "hook": 89.5,
+      "pacing": 75.7,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 04:09:51 (z=6.9); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=6.9) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 04:09:51"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 4,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*04:09:46-04:10:21\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_4.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 17481.0,
+    "end_s": 17516.0,
+    "start": "04:51:21",
+    "end": "04:51:56",
+    "duration_s": 35,
+    "viral_probability": 70.5,
+    "factors": {
+      "hook": 89.5,
+      "pacing": 75.7,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 04:51:26 (z=6.9); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=6.9) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 04:51:26"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 5,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*04:51:21-04:51:56\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_5.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 13823.0,
+    "end_s": 13858.0,
+    "start": "03:50:23",
+    "end": "03:50:58",
+    "duration_s": 35,
+    "viral_probability": 69.8,
+    "factors": {
+      "hook": 88.0,
+      "pacing": 74.8,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 03:50:28 (z=6.6); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=6.6) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 03:50:28"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 6,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*03:50:23-03:50:58\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_6.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 3293.0,
+    "end_s": 3328.0,
+    "start": "00:54:53",
+    "end": "00:55:28",
+    "duration_s": 35,
+    "viral_probability": 68.0,
+    "factors": {
+      "hook": 84.0,
+      "pacing": 72.4,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 00:54:58 (z=5.8); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=5.8) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 00:54:58"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 7,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*00:54:53-00:55:28\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_7.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 6359.0,
+    "end_s": 6394.0,
+    "start": "01:45:59",
+    "end": "01:46:34",
+    "duration_s": 35,
+    "viral_probability": 68.0,
+    "factors": {
+      "hook": 84.0,
+      "pacing": 72.4,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 01:46:04 (z=5.8); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=5.8) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 01:46:04"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 8,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*01:45:59-01:46:34\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_8.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 6397.0,
+    "end_s": 6432.0,
+    "start": "01:46:37",
+    "end": "01:47:12",
+    "duration_s": 35,
+    "viral_probability": 68.0,
+    "factors": {
+      "hook": 84.0,
+      "pacing": 72.4,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 01:46:42 (z=5.8); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=5.8) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 01:46:42"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 9,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*01:46:37-01:47:12\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_9.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  },
+  {
+    "start_s": 2949.0,
+    "end_s": 2984.0,
+    "start": "00:49:09",
+    "end": "00:49:44",
+    "duration_s": 35,
+    "viral_probability": 67.6,
+    "factors": {
+      "hook": 83.0,
+      "pacing": 71.8,
+      "trend": 55.0,
+      "loop": 55.0
+    },
+    "why": "Audio/chat peak at 00:49:14 (z=5.6); no transcript was available, so this clip is selected from signal evidence only.",
+    "hook_text": "AUDIO PEAK",
+    "hook_line": "AUDIO PEAK",
+    "moment_category": "High-Tension Hook",
+    "moment_reason": "A nearby audio/chat peak (z=5.6) is the available hook evidence.",
+    "titles": [
+      "Audio Peak at 00:49:14"
+    ],
+    "caption": "",
+    "hashtags": [
+      "#shorts",
+      "#reels",
+      "#tiktok"
+    ],
+    "id": 10,
+    "download_cmd": "yt-dlp \"https://www.youtube.com/watch?v=8Vk9noDsgwc&t=20s\" --download-sections \"*00:49:09-00:49:44\" --force-keyframes-at-cuts -f \"bv*[height<=1080]+ba/b\" -o \"work/clip_10.%(ext)s\"",
+    "reference_blueprint": {
+      "title": "Furi Insane Ace On Ancient ",
+      "duration_s": 9,
+      "description": "Furi Insane Ace On Ancient \n\n\n#cs2 #csgo #cs2moments #furi #shorts",
+      "hook_pattern": "Furi Insane Ace On Ancient ",
+      "average_sentence_words": 0,
+      "sentences_per_minute": 0,
+      "cut_rhythm_seconds": 0,
+      "cut_rhythm_source": "subtitle cue spacing (approximation; no video downloaded)",
+      "caption_energy": 0,
+      "caption_sample": ""
+    }
+  }
+]

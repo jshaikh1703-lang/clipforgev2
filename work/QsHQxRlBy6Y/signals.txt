@@ -1,0 +1,13 @@
+loud [00:00:08] z=2.1
+loud [00:04:23] z=2.1
+HOOK SCOUT CANDIDATES (transcript + pace + signal):
+hook [00:04:11] signal=2.1 pace=3.08: It is drawn in school books in such a way that it looks like there is a magnet in the earth. But there is no magnet present there. It is actually the melted iron in the earth
+hook [00:04:21] signal=2.1 pace=2.25: that is making the magnetic field. And this magnetic field works like an invisible shield. It protects us from the dangerous radiation from the sun and space.
+hook [00:04:40] signal=2.1 pace=2.25: Now, here, a common misconception is that people confuse this magnetic North Pole with Earth's geographic North Pole. People think that this is the only North Pole.
+hook [00:00:29] signal=2.1 pace=2.0: This was a time when humans lived in jungles and caves. At this time, cave art made by the natives was suddenly gaining popularity.
+hook [00:04:01] signal=2.1 pace=2.0: So, these currents that flow in the earth create the magnetic field of the earth. This is what gives the earth its geomagnetic field.
+hook [00:04:31] signal=2.1 pace=2.0: This magnetic field has a North and South Pole. And the biggest clue to what is going on in the earth is this point.
+hook [00:00:09] signal=2.1 pace=1.83: There were terrible lightning storms all around, and colourful auroras were visible everywhere. Radiation from space reached Earth, destroying the ozone layer.
+hook [00:00:00] signal=2.1 pace=1.42: About 42,000 years ago, something happened on Earth and it looked like the sky was breaking apart.
+hook [00:11:24] signal=0.0 pace=3.33: on the boundary of the mantle and the outer core, the magnetic field is not uniform. And there are two large lobes where the magnetic field is concentrated. One of these lobes is below Canada and the other below Siberia.
+hook [00:00:21] signal=2.1 pace=1.17: Ultraviolet radiation increased rapidly, and a wave of climate change came over the world.
