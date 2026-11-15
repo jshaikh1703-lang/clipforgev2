@@ -11,6 +11,7 @@ import app as app_module
 from agents import (
     CaptionStylistAgent,
     CaptionWord,
+    ShoCapAgent,
     StudioCommandAgent,
     UpscalerAgent,
     ViralReverseEngineerAgent,
@@ -217,6 +218,134 @@ class PersistentPipelineTests(unittest.TestCase):
 
             self.assertFalse((root / "analysis_chunks" / "chunk_01" /
                               "analysis_chunk.mp4").exists())
+
+    def test_video_url_chunks_download_lowest_quality_and_delete_after_analysis(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            downloads = []
+
+            def fake_download(source_url, chunk_work, start_s, end_s, output_stem,
+                              format_selector, recode_video=False):
+                if downloads:
+                    self.assertFalse(downloads[-1].exists())
+                path = chunk_work / f"{output_stem}.webm"
+                path.write_bytes(b"chunk")
+                downloads.append(path)
+                self.assertEqual(source_url, "https://example.com/vod")
+                self.assertEqual(format_selector, "worstvideo/worst")
+                self.assertFalse(recode_video)
+                return path
+
+            def analyze_chunk(video_path, _chunk_work, index, start_s, end_s):
+                self.assertTrue(video_path.is_file())
+                return [{"id": index + 1, "start_s": start_s, "end_s": end_s}]
+
+            with patch("common.download_video_range", side_effect=fake_download):
+                results = common.analyze_video_url_in_chunks(
+                    "https://example.com/vod", root, 100, analyze_chunk)
+
+            self.assertEqual([(clip["start_s"], clip["end_s"]) for clip in results],
+                             [(0, 20), (20, 40), (40, 60), (60, 80), (80, 100)])
+            self.assertEqual(len(downloads), 5)
+            self.assertTrue(all(not path.exists() for path in downloads))
+
+    def test_video_url_chunk_is_deleted_when_analysis_fails(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            downloaded = []
+
+            def fake_download(_url, chunk_work, _start_s, _end_s, output_stem,
+                              _format_selector, _recode_video=False):
+                path = chunk_work / f"{output_stem}.webm"
+                path.write_bytes(b"chunk")
+                downloaded.append(path)
+                return path
+
+            def fail_analysis(video_path, *_args):
+                self.assertTrue(video_path.is_file())
+                raise RuntimeError("analysis failed")
+
+            with patch("common.download_video_range", side_effect=fake_download):
+                with self.assertRaisesRegex(RuntimeError, "analysis failed"):
+                    common.analyze_video_url_in_chunks(
+                        "https://example.com/vod", root, 100, fail_analysis)
+
+            self.assertEqual(len(downloaded), 1)
+            self.assertFalse(downloaded[0].exists())
+
+    def test_download_video_range_requests_only_the_lowest_quality_section(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            captured = {}
+
+            class FakeDownloader:
+                def __init__(self, options):
+                    captured["options"] = options
+
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *_args):
+                    return False
+
+                def download(self, urls):
+                    captured["urls"] = urls
+                    captured["ranges"] = list(
+                        captured["options"]["download_ranges"]({"duration": 100}, self))
+                    Path(captured["options"]["outtmpl"].replace("%(ext)s", "webm")).write_bytes(
+                        b"section")
+
+            with patch("yt_dlp.YoutubeDL", FakeDownloader):
+                downloaded = common.download_video_range(
+                    "https://example.com/vod", root, 20, 40, "analysis_chunk",
+                    "worstvideo/worst")
+
+            self.assertEqual(downloaded.name, "analysis_chunk.webm")
+            self.assertEqual(captured["urls"], ["https://example.com/vod"])
+            self.assertEqual(captured["options"]["format"], "worstvideo/worst")
+            self.assertEqual(captured["ranges"], [{"start_time": 20, "end_time": 40}])
+
+    def test_video_range_removes_partial_output_when_download_fails(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+
+            class FailingDownloader:
+                def __init__(self, options):
+                    self.options = options
+
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *_args):
+                    return False
+
+                def download(self, _urls):
+                    Path(self.options["outtmpl"].replace("%(ext)s", "webm")).write_bytes(
+                        b"partial")
+                    raise RuntimeError("download failed")
+
+            with patch("yt_dlp.YoutubeDL", FailingDownloader):
+                with self.assertRaisesRegex(RuntimeError, "download failed"):
+                    common.download_video_range(
+                        "https://example.com/vod", root, 20, 40, "analysis_chunk",
+                        "worstvideo/worst")
+
+            self.assertEqual(list(root.glob("analysis_chunk.*")), [])
+
+    def test_showcap_downloads_previews_from_candidate_timestamps(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            clips = [{"id": 2, "start_s": 12.5, "end_s": 42.0}]
+            preview = root / "clip_2_12500_42000.mp4"
+
+            with patch("common.download_video_range", return_value=preview) as download:
+                previews = ShoCapAgent.prepare_previews(
+                    "https://example.com/vod", root, clips)
+
+            self.assertEqual(previews, [preview])
+            download.assert_called_once_with(
+                "https://example.com/vod", root, 12.5, 42.0, "clip_2_12500_42000",
+                "bv*[height<=360]+ba/b[height<=360]", recode_video=True)
 
     def test_chunk_clip_merge_ranks_and_removes_overlapping_results(self):
         clips = [

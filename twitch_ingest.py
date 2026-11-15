@@ -15,10 +15,9 @@ from typing import Any, Callable
 import ijson
 import yt_dlp
 
-from agents import MoCapAgent
+from agents import MoCapAgent, ShoCapAgent
 from common import (
-    analyze_video_in_chunks, audio_loudness, download_source_video,
-    extract_clip_slices_and_cleanup_source, hms, merge_chunk_clips, ram_guard, run_pipeline,
+    audio_loudness, hms, merge_chunk_clips, ram_guard, run_pipeline,
     shift_signal_timestamps, slice_segments, transcribe_audio,
 )
 from database import ClipForgeStore, default_store_path
@@ -107,12 +106,12 @@ def main(progress_callback: Callable[[str, float | None], None] | None = None) -
     report_progress("[twitch] Transcribing audio with Whisper", 40)
     segments = transcribe_audio(audio)
     audio.unlink()
-    report_progress("[twitch] Downloading source video at 360p maximum", 65)
-    source_video = download_source_video(a.url, work)
+    report_progress("[twitch] Preparing five low-quality video ranges for MoCap", 65)
     sensitivity = store.get_agent_configs()["MoCap"].get("motion_sensitivity", "normal")
     report_progress("[twitch] Analyzing video in five 20% chunks", 70)
     store.record_agent_event("MoCap", "running", "Analyzing low-resolution video and chat",
                              task_id=a.task_id or None)
+    mocap_agent = MoCapAgent()
     short_video_signals: list[str] = []
     needs_full_context = duration / 5 < 25
 
@@ -123,7 +122,7 @@ def main(progress_callback: Callable[[str, float | None], None] | None = None) -
         chunk_chat = [offset - start_s for offset in chat if start_s <= offset < end_s]
         loud_start, loud_end = int(start_s), min(len(loud), int(end_s + 0.999))
         chunk_loudness = loud[loud_start:loud_end]
-        mocap_signals = MoCapAgent().analyze(
+        mocap_signals = mocap_agent.analyze(
             chunk_video, chunk_chat, chunk_duration, sensitivity)
         if needs_full_context:
             (chunk_work / "mocap_signals.json").write_text(
@@ -144,8 +143,8 @@ def main(progress_callback: Callable[[str, float | None], None] | None = None) -
             clip["end"] = hms(clip["end_s"])
         return clips
 
-    chunk_clips = analyze_video_in_chunks(
-        source_video, work, duration, analyze_chunk, report_progress)
+    chunk_clips = mocap_agent.analyze_video(
+        a.url, work, duration, analyze_chunk, report_progress)
     if needs_full_context:
         clips = run_pipeline(
             source_url=a.url, work=work, duration_s=duration, segments=segments,
@@ -156,13 +155,23 @@ def main(progress_callback: Callable[[str, float | None], None] | None = None) -
     else:
         clips = merge_chunk_clips(chunk_clips, a.url, a.target_count)
     (work / "clips.json").write_text(json.dumps(clips, indent=2), encoding="utf-8")
+    timestamps = [
+        {"clip_id": clip["id"], "start_s": clip["start_s"], "end_s": clip["end_s"]}
+        for clip in clips
+    ]
     store.record_agent_event("MoCap", "completed",
-                             f"Analyzed five chunks and found {len(chunk_clips)} candidates",
-                             task_id=a.task_id or None, progress=100)
-    report_progress("[twitch] Extracting selected clip previews", 92)
-    extracted = extract_clip_slices_and_cleanup_source(source_video, work, clips)
-    store.record_agent_event("ShoCap", "completed", f"Prepared {len(extracted)} clip previews",
-                             task_id=a.task_id or None, progress=100)
+                             f"Analyzed five chunks and found {len(clips)} candidate moments",
+                             task_id=a.task_id or None, progress=100,
+                             result={"timestamps": timestamps})
+    store.record_agent_event("ShoCap", "running",
+                             f"Preparing previews for {len(timestamps)} timestamped moments",
+                             task_id=a.task_id or None, result={"timestamps": timestamps})
+    report_progress("[twitch] Downloading selected clip previews", 92)
+    extracted = ShoCapAgent.prepare_previews(a.url, work, clips)
+    store.record_agent_event(
+        "ShoCap", "completed", f"Prepared {len(extracted)} clip previews",
+        task_id=a.task_id or None, progress=100,
+        result={"preview_count": len(extracted), "clip_ids": [clip["id"] for clip in clips]})
     report_progress("[twitch] Ingest complete", 100)
     return {"video_id": work.name, "clips": clips}
 

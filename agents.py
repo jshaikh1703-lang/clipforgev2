@@ -8,7 +8,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import urlparse
 
 
@@ -52,6 +52,15 @@ class MoCapAgent:
     FRAME_WIDTH = 160
     FRAME_HEIGHT = 90
     SAMPLE_FPS = 0.5
+
+    def analyze_video(self, source_url: str, work: Path, duration_s: float,
+                      analyze_chunk: Callable[[Path, Path, int, float, float], list[dict[str, Any]]],
+                      progress_callback: Callable[[str, float | None], None] | None = None
+                      ) -> list[dict[str, Any]]:
+        from common import analyze_video_url_in_chunks
+
+        return analyze_video_url_in_chunks(
+            source_url, work, duration_s, analyze_chunk, progress_callback)
 
     def analyze(self, video_path: Path, chat_offsets: list[float], duration_s: float,
                 sensitivity: str = "normal") -> list[str]:
@@ -626,6 +635,13 @@ class EditorAgent(DirectorAgent):
 
 class ShoCapAgent:
     """Attach preview URLs and review decisions to ranked short-form clips."""
+
+    @staticmethod
+    def prepare_previews(source_url: str, work: Path,
+                         clips: list[dict[str, Any]]) -> list[Path]:
+        from common import download_clip_previews
+
+        return download_clip_previews(source_url, work, clips)
 
     @staticmethod
     def present(clips: list[dict[str, Any]], video_id: str,

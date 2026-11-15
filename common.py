@@ -214,6 +214,93 @@ def download_source_video(source_url: str, work: Path) -> Path:
     return downloaded[0]
 
 
+def download_video_range(source_url: str, work: Path, start_s: float, end_s: float,
+                         output_stem: str, format_selector: str,
+                         recode_video: bool = False) -> Path:
+    """Download only one time range from a URL."""
+    import yt_dlp
+    from yt_dlp.utils import download_range_func
+
+    if (not math.isfinite(start_s) or not math.isfinite(end_s)
+            or start_s < 0 or end_s <= start_s):
+        raise ValueError("Video range must have finite, increasing timestamps.")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", output_stem):
+        raise ValueError("Video range output name contains unsupported characters.")
+    if not source_url.strip():
+        raise ValueError("A source URL is required to download a video range.")
+
+    work.mkdir(parents=True, exist_ok=True)
+    for path in work.glob(f"{output_stem}.*"):
+        if path.is_file():
+            path.unlink()
+    output_template = str(work / f"{output_stem}.%(ext)s")
+    options = {
+        "format": format_selector,
+        "download_ranges": download_range_func(None, [(start_s, end_s)]),
+        "force_keyframes_at_cuts": True,
+        "merge_output_format": "mp4",
+        "outtmpl": output_template,
+        "noplaylist": True,
+        "quiet": True,
+        "no_warnings": True,
+    }
+    if recode_video:
+        options["recodevideo"] = "mp4"
+
+    try:
+        with yt_dlp.YoutubeDL(options) as downloader:
+            downloader.download([source_url])
+        downloaded = sorted(
+            path for path in work.glob(f"{output_stem}.*")
+            if path.suffix.lower() in {".mp4", ".mkv", ".webm", ".m4v", ".mov", ".ts", ".flv"}
+        )
+        if recode_video:
+            downloaded = [path for path in downloaded if path.suffix.lower() == ".mp4"]
+        if not downloaded:
+            raise RuntimeError(
+                f"Downloading video range {start_s:.3f}-{end_s:.3f}s produced no video file.")
+        selected = downloaded[0]
+        for path in work.glob(f"{output_stem}.*"):
+            if path.is_file() and path != selected:
+                path.unlink()
+        return selected
+    except Exception:
+        for path in work.glob(f"{output_stem}.*"):
+            if path.is_file():
+                path.unlink()
+        raise
+
+
+def download_clip_previews(source_url: str, work: Path, clips: list[dict]) -> list[Path]:
+    """Download low-resolution preview sections for timestamped clip candidates."""
+    previews = []
+    for clip in clips:
+        try:
+            clip_id = int(clip["id"])
+            start_s, end_s = float(clip["start_s"]), float(clip["end_s"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("Clip preview requires an ID and valid start/end timestamps.") from exc
+        if (clip_id < 1 or not math.isfinite(start_s) or not math.isfinite(end_s)
+                or start_s < 0 or end_s <= start_s):
+            raise ValueError(f"Clip {clip_id} has invalid preview timestamps.")
+
+        output_stem = (
+            f"clip_{clip_id}_{round(start_s * 1000)}_{round(end_s * 1000)}")
+        expected_path = work / f"{output_stem}.mp4"
+        if expected_path.is_file():
+            previews.append(expected_path)
+            continue
+
+        preview = download_video_range(
+            source_url, work, start_s, end_s, output_stem,
+            "bv*[height<=360]+ba/b[height<=360]", recode_video=True)
+        if preview.suffix.lower() != ".mp4":
+            preview.unlink()
+            raise RuntimeError(f"Preview for clip {clip_id} was not converted to MP4.")
+        previews.append(preview)
+    return previews
+
+
 def extract_clip_slices(source_path: Path, work: Path, clips: list[dict]) -> list[Path]:
     extracted = []
     for clip in clips:
@@ -247,11 +334,15 @@ def extract_clip_slices_and_cleanup_source(source_path: Path, work: Path,
     return extracted
 
 
-def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
-                            analyze_chunk: Callable[[Path, Path, int, float, float], list[dict]],
-                            progress_callback: Callable[[str, float | None], None] | None = None
-                            ) -> list[dict]:
-    """Analyze five sequential video sections, persisting results and deleting each section."""
+def _analyze_video_chunks(source_path: Path | None, source_url: str | None, work: Path,
+                          duration_s: float,
+                          analyze_chunk: Callable[[Path, Path, int, float, float], list[dict]],
+                          progress_callback: Callable[[str, float | None], None] | None = None
+                          ) -> list[dict]:
+    if (source_path is None) == (source_url is None):
+        raise ValueError("Provide either a source video path or a source URL.")
+    if source_url is not None and not source_url.strip():
+        raise ValueError("A source URL is required for URL-based chunk analysis.")
     if not math.isfinite(duration_s) or duration_s <= 0:
         raise ValueError("Video duration must be a positive finite number.")
 
@@ -264,7 +355,6 @@ def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
         end_s = duration_s * (index + 1) / chunk_count
         chunk_work = chunk_root / f"chunk_{index + 1:02d}"
         chunk_work.mkdir(parents=True, exist_ok=True)
-        chunk_video = chunk_work / "analysis_chunk.mp4"
         try:
             if progress_callback:
                 progress_callback(
@@ -272,12 +362,19 @@ def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
                     f"(chunk {index + 1}/{chunk_count})",
                     70.0 + index * 4.0,
                 )
-            subprocess.run([
-                "ffmpeg", "-y", "-v", "error", "-ss", f"{start_s:.3f}",
-                "-i", str(source_path), "-t", f"{end_s - start_s:.3f}",
-                "-map", "0:v:0", "-an", "-c:v", "libx264", "-preset", "ultrafast",
-                "-threads", "2", str(chunk_video),
-            ], check=True)
+            if source_url is not None:
+                chunk_video = download_video_range(
+                    source_url, chunk_work, start_s, end_s, "analysis_chunk",
+                    "worstvideo/worst")
+            else:
+                assert source_path is not None
+                chunk_video = chunk_work / "analysis_chunk.mp4"
+                subprocess.run([
+                    "ffmpeg", "-y", "-v", "error", "-ss", f"{start_s:.3f}",
+                    "-i", str(source_path), "-t", f"{end_s - start_s:.3f}",
+                    "-map", "0:v:0", "-an", "-c:v", "libx264", "-preset", "ultrafast",
+                    "-threads", "2", str(chunk_video),
+                ], check=True)
             clips = analyze_chunk(chunk_video, chunk_work, index, start_s, end_s)
             if not isinstance(clips, list) or any(not isinstance(clip, dict) for clip in clips):
                 raise RuntimeError(f"Analysis of chunk {index + 1} returned invalid clip results.")
@@ -290,8 +387,9 @@ def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
             temporary_results_path.write_text(json.dumps(all_clips, indent=2), encoding="utf-8")
             temporary_results_path.replace(results_path)
         finally:
-            if chunk_video.exists():
-                chunk_video.unlink()
+            for chunk_path in chunk_work.glob("analysis_chunk.*"):
+                if chunk_path.is_file():
+                    chunk_path.unlink()
 
         if progress_callback:
             progress_callback(
@@ -300,6 +398,24 @@ def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
                 70.0 + (index + 1) * 4.0,
             )
     return all_clips
+
+
+def analyze_video_in_chunks(source_path: Path, work: Path, duration_s: float,
+                            analyze_chunk: Callable[[Path, Path, int, float, float], list[dict]],
+                            progress_callback: Callable[[str, float | None], None] | None = None
+                            ) -> list[dict]:
+    """Analyze five local video sections, persisting results and deleting each section."""
+    return _analyze_video_chunks(
+        source_path, None, work, duration_s, analyze_chunk, progress_callback)
+
+
+def analyze_video_url_in_chunks(source_url: str, work: Path, duration_s: float,
+                                analyze_chunk: Callable[[Path, Path, int, float, float], list[dict]],
+                                progress_callback: Callable[[str, float | None], None] | None = None
+                                ) -> list[dict]:
+    """Download, analyze, and delete five lowest-quality sequential URL sections."""
+    return _analyze_video_chunks(
+        None, source_url, work, duration_s, analyze_chunk, progress_callback)
 
 
 def merge_chunk_clips(clips: list[dict], source_url: str, target_count: int) -> list[dict]:

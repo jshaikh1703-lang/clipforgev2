@@ -40,10 +40,11 @@ The dashboard offers:
 - SQLite stores style presets, trend data, agent configuration, review decisions, agent events, and task history;
   video/audio files are never stored in the database. The default database is `clipforge.sqlite3` beside `app.py`.
   Set `CLIPFORGE_DB_PATH` to choose another path. SQLite WAL/SHM files are ignored by Git.
-- Ingest downloads a source at no more than 360p and analyzes it in five sequential 20% chunks. Each chunk's
-  scored results are saved before its temporary video file is deleted. Once all chunks finish, results are ranked
-  together, preview slices are extracted, and the full source is deleted. Extracted slices and per-chunk analysis
-  results remain under `work/` for previews and rerendering; generated 4K outputs are stored under `output/`.
+- Ingest analyzes five sequential 20% URL ranges using the lowest available video quality. MoCap analyzes each
+  downloaded range, persists its results, then deletes the temporary video before downloading the next range.
+  Selected timestamps are handed to ShoCap, which downloads only the 360p-or-lower preview ranges. Previews and
+  per-chunk analysis results remain under `work/` for review and rerendering; generated 4K outputs are stored
+  under `output/`.
 - Queued/running render batches are recovered after an application restart. Interrupted ingests remain in task history
   and can be retried from the dashboard with an API key; API keys are not persisted.
 - 4K output uses FFmpeg Lanczos scaling (2160×3840 portrait or 3840×2160 landscape); this increases output
